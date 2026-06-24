@@ -614,24 +614,28 @@ async function loadFromSupabase(){
   }catch{ setSyncState('error'); }
 }
 
+let realtimeChannel = null;
+
 function subscribeRealtime(){
 
   if(!_currentUser) return;
 
-  _sb
-  .channel('salvus-progress')
-  .on(
-    'postgres_changes',
-    {
-      event:'*',
-      schema:'public',
-      table:'salvus_progress'
-    },
-    ()=>{
-      loadFromSupabase();
-    }
-  )
-  .subscribe();
+  if(realtimeChannel) return;
+
+  realtimeChannel = _sb
+    .channel('salvus-progress')
+    .on(
+      'postgres_changes',
+      {
+        event:'*',
+        schema:'public',
+        table:'salvus_progress'
+      },
+      () => {
+        loadFromSupabase();
+      }
+    )
+    .subscribe();
 }
 
 // ── AUTH FUNCTIONS ────────────────────────────────────────────────────────────
@@ -704,7 +708,14 @@ async function resetPassword(){
 }
 
 async function doLogout(){
+
   if(!confirm('¿Cerrar sesión?')) return;
+
+  if(realtimeChannel){
+    _sb.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+
   await _sb.auth.signOut();
 }
 
