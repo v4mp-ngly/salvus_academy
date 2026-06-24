@@ -221,6 +221,12 @@ pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 
         <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
       </div>
       <button class="auth-submit" id="login-btn" onclick="doLogin()">Entrar</button>
+      <div style="text-align:center;margin-top:10px">
+        <a href="#" onclick="resetPassword()"
+     style="font-size:12px;color:#4C3D9E;text-decoration:none">
+     ¿Olvidaste tu contraseña?
+  </a>
+</div>
       <div class="auth-msg" id="login-msg"></div>
     </div>
 
@@ -271,6 +277,13 @@ pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 
     <div class="nav-item" data-page="progress"><span class="ni">📈</span>Objetivos</div>
     <div class="sb-foot">
       <div class="sb-badge">
+        <div class="s" id="student-level">
+Nivel: Principiante
+</div>
+
+<div class="s" id="student-xp">
+XP: 0
+</div>
         <div class="t" id="sb-phase">Fase 1 activa</div>
         <div class="s" id="sb-day">Día actual: 1</div>
         <div class="s" id="sb-checks">0 competencias dominadas</div>
@@ -312,6 +325,10 @@ pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 
           </div>
         </div>
         <div class="g2">
+          <div class="card">
+  <h3>🏆 Ranking</h3>
+  <div id="leaderboard-box"></div>
+</div>
           <div class="card">
             <h3>Progreso por área</h3>
             <div id="area-bars"></div>
@@ -429,6 +446,8 @@ let ST = Object.assign({days:{},tasks:{},checks:{},exams:{}}, loadLocalSt());
 
 let _saveTimer = null;
 function save(){
+  syncLeaderboard();
+  saveLocalSt(ST);
   // Guardar siempre en localStorage (offline-first)
   saveLocalSt(ST);
   // Sincronizar con Supabase si hay usuario
@@ -446,6 +465,42 @@ function setSyncState(state){
   if(state==='saving'){dot.style.background='#C55A11';txt.textContent='guardando…';}
   else if(state==='ok'){dot.style.background='#1A7A4A';txt.textContent='sincronizado';}
   else if(state==='error'){dot.style.background='#B83232';txt.textContent='error de sync';}
+}
+
+async function syncLeaderboard(){
+
+  if(!_currentUser) return;
+
+  const days =
+  Object.values(ST.days)
+  .filter(Boolean)
+  .length;
+
+  const tasks =
+  Object.values(ST.tasks)
+  .filter(Boolean)
+  .length;
+
+  const checks =
+  Object.values(ST.checks)
+  .filter(Boolean)
+  .length;
+
+  const points =
+  (days*10)+
+  (tasks*2)+
+  (checks*5);
+
+  await _sb
+  .from('leaderboard')
+  .upsert({
+    user_id:_currentUser.id,
+    user_name:
+    _currentUser.user_metadata
+    ?.full_name ||
+    _currentUser.email,
+    points
+  });
 }
 
 async function syncToSupabase(){
@@ -472,6 +527,26 @@ async function loadFromSupabase(){
     }
     setSyncState('ok');
   }catch{ setSyncState('error'); }
+}
+
+function subscribeRealtime(){
+
+  if(!_currentUser) return;
+
+  _sb
+  .channel('salvus-progress')
+  .on(
+    'postgres_changes',
+    {
+      event:'*',
+      schema:'public',
+      table:'salvus_progress'
+    },
+    ()=>{
+      loadFromSupabase();
+    }
+  )
+  .subscribe();
 }
 
 // ── AUTH FUNCTIONS ────────────────────────────────────────────────────────────
@@ -521,6 +596,28 @@ async function doRegister(){
   btn.disabled=false; btn.textContent='Crear cuenta';
 }
 
+async function resetPassword(){
+
+  const email = prompt(
+    "Introduce tu correo electrónico"
+  );
+
+  if(!email) return;
+
+  const { error } =
+  await _sb.auth.resetPasswordForEmail(email,{
+    redirectTo: window.location.href
+  });
+
+  if(error){
+    alert(error.message);
+  }else{
+    alert(
+      "Te enviamos un correo para recuperar tu contraseña."
+    );
+  }
+}
+
 async function doLogout(){
   if(!confirm('¿Cerrar sesión?')) return;
   await _sb.auth.signOut();
@@ -537,6 +634,7 @@ function onUserLoggedIn(user){
   document.getElementById('user-name-label').textContent = name.split(' ')[0];
   // Cargar progreso desde Supabase
   loadFromSupabase();
+subscribeRealtime();
 }
 
 function onUserLoggedOut(){
@@ -1082,6 +1180,7 @@ function el(tag,attrs,html){
 function updateGlobal(){
   const days = Object.values(ST.days).filter(Boolean).length;
   const checks = Object.values(ST.checks).filter(Boolean).length;
+  const tasks = Object.values(ST.tasks).filter(Boolean).length;
   const p = pct((days/49)*100);
   document.getElementById('xp-pct').textContent = p+'%';
   document.getElementById('xp-fill').style.width = p+'%';
@@ -1091,6 +1190,28 @@ function updateGlobal(){
   document.getElementById('sb-checks').textContent = checks+' competencias dominadas';
   const phase = days<28?'Fase 1 activa':days<49?'Fase 2 activa':'¡Fase 2 completada! ✓';
   document.getElementById('sb-phase').textContent = phase;
+  const xp =
+days*50 +
+tasks*10 +
+checks*25;
+
+document.getElementById(
+'student-xp'
+).textContent =
+'XP: '+xp;
+
+let level='Principiante';
+
+if(xp>1000)
+level='Intermedio';
+
+if(xp>2500)
+level='Avanzado';
+
+document.getElementById(
+'student-level'
+).textContent =
+'Nivel: '+level;
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────────────────────
@@ -1160,6 +1281,40 @@ function renderDashboard(){
   } else {
     ntEl.innerHTML = '<p style="color:#7A8899;font-size:13px">Completaste los 49 días del plan. Ahora continúa con el checklist de competencias.</p>';
   }
+
+  loadLeaderboard();
+}
+
+async function loadLeaderboard(){
+
+ const {data}
+ =
+ await _sb
+ .from('leaderboard')
+ .select('*')
+ .order('points',
+ {ascending:false})
+ .limit(10);
+
+ const box =
+ document.getElementById(
+ 'leaderboard-box'
+ );
+
+ if(!box) return;
+
+ box.innerHTML =
+ (data||[])
+ .map((u,i)=>`
+ <div style="
+ padding:8px;
+ border-bottom:1px solid #eee">
+ #${i+1}
+ ${u.user_name}
+ - ${u.points} pts
+ </div>
+ `)
+ .join('');
 }
 
 // ── STUDY ────────────────────────────────────────────────────────────────────
