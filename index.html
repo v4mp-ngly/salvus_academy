@@ -542,11 +542,6 @@ function onUserLoggedIn(user){
 function onUserLoggedOut(){
   _currentUser = null;
   document.getElementById('auth-screen').classList.remove('hidden');
-  // Limpiar estado al salir (por privacidad)
-  function onUserLoggedOut(){
-  _currentUser = null;
-  document.getElementById('auth-screen').classList.remove('hidden');
-}
 }
 
 // ── SUPABASE AUTH LISTENER ────────────────────────────────────────────────────
