@@ -195,6 +195,82 @@ pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 
 .al-ok{background:#E4F6EE;border-color:#1A7A4A;color:#135F35}
 .al-warn{background:#FEF3E2;border-color:#C55A11;color:#7A3E07}
 .al-info{background:#E5EEF8;border-color:#1B3A5C;color:#14376A}
+
+/* ===== RESPONSIVE ===== */
+
+/* Tablets */
+
+@media (max-width:1024px){
+
+  .g4{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .g2{
+    grid-template-columns:1fr;
+  }
+
+}
+
+/* Móviles */
+
+@media (max-width:768px){
+
+  .app{
+    flex-direction:column;
+  }
+
+  .sb{
+    width:100%;
+    min-width:100%;
+    height:auto;
+  }
+
+  .main{
+    width:100%;
+  }
+
+  .content{
+    padding:12px;
+  }
+
+  .g4{
+    grid-template-columns:1fr;
+  }
+
+  .g2{
+    grid-template-columns:1fr;
+  }
+
+  .day-2col{
+    grid-template-columns:1fr;
+  }
+
+  .topbar{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+  }
+
+}
+
+/* iPhone pequeños */
+
+@media (max-width:480px){
+
+  html{
+    font-size:14px;
+  }
+
+  .card{
+    padding:12px;
+  }
+
+  .stat-n{
+    font-size:22px;
+  }
+
+}
 </style>
 </head>
 <body>
