@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salvus Academy</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F2F5F8;color:#1B2A3B;font-size:14px}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sb{width:210px;min-width:210px;background:#1B2A3B;display:flex;flex-direction:column;overflow-y:auto}
+.sb-logo{padding:16px 14px 10px}
+.sb-logo h1{font-size:14px;font-weight:700;color:#fff}
+.sb-logo p{font-size:11px;color:#7B9AB5;margin-top:2px}
+.xp-wrap{padding:0 14px 10px}
+.xp-row{display:flex;justify-content:space-between;font-size:10px;color:#7B9AB5;margin-bottom:3px}
+.xp-row span:last-child{font-weight:700;color:#9FE1CB}
+.xp-bar{height:4px;background:#2D4055;border-radius:2px;overflow:hidden}
+.xp-fill{height:100%;background:#1D9E75;border-radius:2px;transition:width .5s}
+.nav-sec{padding:8px 14px 3px;font-size:10px;font-weight:700;color:#5A7A99;letter-spacing:.06em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 12px;margin:1px 6px;border-radius:7px;cursor:pointer;font-size:13px;color:#7B9AB5;transition:all .15s}
+.nav-item:hover{background:#243548;color:#CBD8E8}
+.nav-item.active{background:#2D4866;color:#fff;font-weight:600}
+.nav-item .ni{font-size:15px;width:20px;text-align:center}
+.sb-foot{margin-top:auto;padding:12px 14px 16px}
+.sb-badge{background:#243548;border-radius:8px;padding:10px 12px}
+.sb-badge .t{font-size:11px;font-weight:700;color:#9FE1CB}
+.sb-badge .s{font-size:10px;color:#7B9AB5;margin-top:2px}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:#fff;border-bottom:1px solid #E5EBF2;padding:11px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar h2{font-size:15px;font-weight:700;color:#1B2A3B}
+.topbar-badges{display:flex;gap:7px}
+.tb-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.bg-green{background:#E4F6EE;color:#1A7A4A}
+.bg-purple{background:#EDEBFC;color:#4C3D9E}
+.content{flex:1;overflow-y:auto;padding:18px 22px}
+.page{display:none}
+.page.active{display:block}
+
+/* CARDS */
+.card{background:#fff;border:1px solid #E5EBF2;border-radius:11px;padding:15px 17px;margin-bottom:12px}
+.card h3{font-size:14px;font-weight:700;color:#1B2A3B;margin-bottom:10px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.stat-card{background:#fff;border:1px solid #E5EBF2;border-radius:11px;padding:14px;text-align:center}
+.stat-n{font-size:28px;font-weight:700;color:#1B2A3B;line-height:1}
+.stat-l{font-size:11px;color:#7A8899;margin-top:3px}
+.stat-s{font-size:10px;color:#B0BBC8;margin-top:1px}
+
+/* PROGRESS BAR */
+.pbar{height:6px;background:#EEF1F5;border-radius:3px;overflow:hidden;width:100%;margin:3px 0}
+.pbar.sm{height:4px}
+.pfill{height:100%;border-radius:3px;transition:width .5s}
+
+/* DAYS GRID */
+.days-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px}
+.dc{border-radius:6px;padding:5px 2px;text-align:center;cursor:pointer;border:1px solid #E5EBF2;background:#F8FAFD;transition:all .15s}
+.dc:hover{border-color:#CBD8E8}
+.dc.done{background:#E6F6F1;border-color:#9FE1CB}
+.dc.next{background:#EDEBFC;border-color:#AFA9EC}
+.dc .dn{font-size:9px;font-weight:700;color:#AAB5C0}
+.dc.done .dn{color:#1A7A4A}
+.dc.next .dn{color:#4C3D9E}
+.dc .dd{width:5px;height:5px;border-radius:50%;margin:3px auto 0;background:#D4DCE4}
+.dc.done .dd{background:#1A7A4A}
+.dc.next .dd{background:#4C3D9E}
+.legend{display:flex;gap:14px;font-size:11px;color:#7A8899;margin-top:4px}
+.leg-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+
+/* TABS */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
+.tab-btn{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #D4DCE4;background:#fff;color:#5A6878;transition:all .15s;font-family:inherit}
+.tab-btn.active{border-color:transparent;color:#fff}
+.tab-btn:hover:not(.active){background:#F5F7FA}
+
+/* STUDY */
+.week-header{border-radius:11px;padding:14px 16px;margin-bottom:12px}
+.week-phase{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:3px;opacity:.8}
+.week-title{font-size:15px;font-weight:700}
+.week-goal{font-size:12px;margin-top:4px;opacity:.8;line-height:1.5}
+.day-card{background:#fff;border:1px solid #E5EBF2;border-radius:11px;padding:14px 16px;margin-bottom:11px;border-left:3px solid #E5EBF2}
+.day-card.done-card{border-left-color:#1A7A4A}
+.day-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.day-num{font-size:10px;font-weight:700;color:#B0BBC8;margin-bottom:3px}
+.day-title{font-size:13px;font-weight:700;color:#1B2A3B}
+.day-tags{display:flex;flex-wrap:wrap;gap:3px;margin:5px 0}
+.tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.02em}
+.day-2col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
+.section-label{font-size:10px;font-weight:700;color:#AAB5C0;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px}
+.section-text{font-size:12px;color:#4A5A6A;line-height:1.6}
+
+/* TASKS */
+.task-list{list-style:none}
+.task-item{display:flex;align-items:flex-start;gap:9px;padding:6px 0;border-bottom:1px solid #F0F3F7;cursor:pointer}
+.task-item:last-child{border-bottom:none}
+.chk{width:19px;height:19px;border-radius:5px;flex-shrink:0;cursor:pointer;border:1.5px solid #C4CDD8;background:#fff;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.chk.on{background:#1A7A4A;border-color:#1A7A4A;color:#fff;font-size:11px;font-weight:700}
+.task-txt{font-size:12px;line-height:1.5;color:#3D4D5C}
+.task-txt.done-txt{text-decoration:line-through;color:#AAB5C0}
+
+/* COMMANDS */
+.cmd-card{background:#fff;border:1px solid #E5EBF2;border-radius:10px;padding:12px 13px;margin-bottom:10px}
+pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 12px;font-size:12px;font-family:monospace;margin:0 0 7px;white-space:pre-wrap;word-break:break-all;position:relative}
+.copy-btn{position:absolute;top:6px;right:6px;background:rgba(255,255,255,.12);border:none;border-radius:5px;color:#fff;font-size:10px;padding:3px 8px;cursor:pointer;font-family:inherit;transition:all .15s}
+.copy-btn.copied{background:#1A7A4A}
+.cmd-desc{font-size:12px;color:#5A6878}
+
+/* RESOURCES */
+.res-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F0F3F7}
+.res-row:last-child{border-bottom:none}
+.res-info{flex:1}
+.res-info strong{font-size:13px;display:block}
+.res-info span{font-size:11px;color:#7A8899}
+.res-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#E5EEF8;color:#1B3A5C;white-space:nowrap;flex-shrink:0}
+.res-link{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid;white-space:nowrap;font-weight:600;text-decoration:none;flex-shrink:0}
+
+/* EXAM */
+.q-card{background:#F8FAFD;border:1px solid #E5EBF2;border-radius:10px;padding:13px;margin-bottom:11px}
+.q-text{font-size:13px;font-weight:600;margin-bottom:10px;line-height:1.6;color:#1B2A3B}
+.q-num{font-weight:700;margin-right:6px}
+.opt{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:7px;border:1.5px solid #E5EBF2;background:#fff;margin-bottom:6px;cursor:pointer;font-size:12px;color:#3D4D5C;transition:all .15s}
+.opt:hover:not(.disabled){border-color:#CBD8E8;background:#F5F7FA}
+.opt.sel{border-color:#4C3D9E;background:#EDEBFC;color:#4C3D9E}
+.opt.ok{border-color:#1A7A4A;background:#E4F6EE;color:#1A7A4A}
+.opt.bad{border-color:#B83232;background:#FDECEA;color:#B83232}
+.opt.disabled{cursor:default}
+.opt-letter{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.explanation{margin-top:8px;padding:9px 11px;background:#EFF7FF;border-radius:7px;border-left:3px solid #378ADD;font-size:12px;color:#1A3A5C;line-height:1.6}
+.exam-result{text-align:center;padding:24px;border-radius:11px;margin-top:12px}
+.score-big{font-size:56px;font-weight:800;line-height:1}
+.score-sub{font-size:14px;margin-top:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:1px solid #D4DCE4;background:#fff;color:#3D4D5C;transition:all .15s;font-family:inherit}
+.btn:hover{background:#F5F7FA}
+.btn.primary{border:none;color:#fff}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+/* CHECKLIST */
+.ck-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ck-pct{font-size:20px;font-weight:800;color:#0D7C76}
+.ck-sub{font-size:12px;color:#7A8899;margin-top:5px}
+.ck-cat{border-left:3px solid #E5EBF2;padding-left:14px;margin-bottom:14px}
+.ck-cat-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ck-cat-head h4{font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.ck-cat-info{display:flex;align-items:center;gap:8px;font-size:12px;color:#7A8899}
+
+/* PROGRESS PAGE */
+.month-card{padding:10px 13px;border-radius:8px;background:#F8FAFD;margin-bottom:8px}
+.month-card h4{font-size:13px;font-weight:700}
+.month-card p{font-size:12px;color:#5A6878;margin-top:3px}
+.kpi-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #F0F3F7}
+.kpi-row:last-child{border-bottom:none}
+.kpi-icon{font-size:18px;width:26px;text-align:center}
+.kpi-label{flex:1;font-size:13px}
+.kpi-meta{font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;background:#E4F6EE;color:#1A7A4A;white-space:nowrap}
+.alert{padding:9px 12px;border-radius:8px;margin-bottom:7px;font-size:12px;line-height:1.5;border-left:3px solid}
+.al-ok{background:#E4F6EE;border-color:#1A7A4A;color:#135F35}
+.al-warn{background:#FEF3E2;border-color:#C55A11;color:#7A3E07}
+.al-info{background:#E5EEF8;border-color:#1B3A5C;color:#14376A}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sb">
+    <div class="sb-logo">
+      <h1>🎓 Salvus Academy</h1>
+      <p>Tu ruta de formación</p>
+    </div>
+    <div class="xp-wrap">
+      <div class="xp-row"><span>Progreso global</span><span id="xp-pct">0%</span></div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    </div>
+    <div class="nav-sec">Principal</div>
+    <div class="nav-item active" data-page="dashboard"><span class="ni">📊</span>Dashboard</div>
+    <div class="nav-item" data-page="study"><span class="ni">📚</span>Plan de estudio</div>
+    <div class="nav-item" data-page="commands"><span class="ni">💻</span>Comandos</div>
+    <div class="nav-item" data-page="resources"><span class="ni">🔗</span>Recursos</div>
+    <div class="nav-sec">Evaluación</div>
+    <div class="nav-item" data-page="exam"><span class="ni">📝</span>Exámenes</div>
+    <div class="nav-item" data-page="checklist"><span class="ni">✅</span>Checklist</div>
+    <div class="nav-sec">Mi avance</div>
+    <div class="nav-item" data-page="progress"><span class="ni">📈</span>Objetivos</div>
+    <div class="sb-foot">
+      <div class="sb-badge">
+        <div class="t" id="sb-phase">Fase 1 activa</div>
+        <div class="s" id="sb-day">Día actual: 1</div>
+        <div class="s" id="sb-checks">0 competencias dominadas</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <h2 id="page-title">📊 Dashboard</h2>
+      <div class="topbar-badges">
+        <span class="tb-badge bg-green" id="tb-days">0/49 días</span>
+        <span class="tb-badge bg-purple" id="tb-checks">0 competencias</span>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="g4" id="stats-grid"></div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <h3 style="margin:0">Progreso general — 49 días del plan</h3>
+            <span style="font-size:13px;font-weight:700;color:#0D7C76" id="days-pct">0%</span>
+          </div>
+          <div class="pbar" style="height:8px"><div class="pfill" id="days-fill" style="width:0%;background:#0D7C76"></div></div>
+          <div class="days-grid" id="days-grid" style="margin-top:12px"></div>
+          <div class="legend">
+            <span><span class="leg-dot" style="background:#1A7A4A"></span>Completado</span>
+            <span><span class="leg-dot" style="background:#4C3D9E"></span>Siguiente</span>
+            <span><span class="leg-dot" style="background:#D4DCE4"></span>Pendiente</span>
+          </div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <h3>Progreso por área</h3>
+            <div id="area-bars"></div>
+          </div>
+          <div class="card">
+            <h3 id="next-day-title">Tareas del día siguiente</h3>
+            <div id="next-day-tasks"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STUDY -->
+      <div class="page" id="page-study">
+        <div class="tabs" id="week-tabs"></div>
+        <div id="week-content"></div>
+      </div>
+
+      <!-- COMMANDS -->
+      <div class="page" id="page-commands">
+        <div class="tabs" id="cmd-tabs"></div>
+        <div id="cmd-content"></div>
+      </div>
+
+      <!-- RESOURCES -->
+      <div class="page" id="page-resources">
+        <div class="card">
+          <h3>▶ YouTube — canales esenciales</h3>
+          <div id="res-yt"></div>
+        </div>
+        <div class="card">
+          <h3>🌐 Recursos gratuitos online</h3>
+          <div id="res-free"></div>
+        </div>
+        <div class="g2">
+          <div class="card">
+            <h3>💎 Cursos de pago</h3>
+            <div id="res-paid"></div>
+          </div>
+          <div class="card">
+            <h3>📖 Libros esenciales</h3>
+            <div id="res-books"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXAM -->
+      <div class="page" id="page-exam">
+        <div class="tabs" id="exam-tabs"></div>
+        <div id="exam-content"></div>
+      </div>
+
+      <!-- CHECKLIST -->
+      <div class="page" id="page-checklist">
+        <div class="card">
+          <div class="ck-total">
+            <h3 style="margin:0">Checklist de competencias — 90 días</h3>
+            <span class="ck-pct" id="ck-pct">0%</span>
+          </div>
+          <div class="pbar" style="height:8px"><div class="pfill" id="ck-fill" style="width:0%;background:#0D7C76"></div></div>
+          <div class="ck-sub" id="ck-sub">0 de 40 competencias dominadas</div>
+        </div>
+        <div id="checklist-content"></div>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="page" id="page-progress">
+        <div class="card">
+          <h3>Objetivos mensuales</h3>
+          <div class="month-card" style="border-left:3px solid #1A7A4A">
+            <h4>Mes 1 (Días 1–30)</h4>
+            <p>Entender el sistema · Corregir 5+ bugs · No depender del desarrollador anterior</p>
+          </div>
+          <div class="month-card" style="border-left:3px solid #4C3D9E">
+            <h4>Mes 2 (Días 31–60)</h4>
+            <p>Implementar 2+ funcionalidades · Gestionar despliegues · Dominar SQL para reportes</p>
+          </div>
+          <div class="month-card" style="border-left:3px solid #C55A11">
+            <h4>Mes 3 (Días 61–90)</h4>
+            <p>Documentar todo · Tests básicos · Optimizar performance · Comunicación profesional</p>
+          </div>
+        </div>
+        <div class="card">
+          <h3>KPIs al finalizar 90 días</h3>
+          <div id="kpi-list"></div>
+        </div>
+        <div class="card">
+          <h3>⚠️ Reglas de oro para heredar proyectos</h3>
+          <div class="alert al-warn">⚠️ <strong>NUNCA</strong> toques producción sin haber probado en local primero</div>
+          <div class="alert al-warn">⚠️ <strong>SIEMPRE</strong> haz commit antes de cualquier cambio en el código</div>
+          <div class="alert al-ok">✅ <strong>LEE</strong> antes de escribir: entiende el código antes de modificarlo</div>
+          <div class="alert al-ok">✅ <strong>DOCUMENTA</strong> todo lo que descubres aunque parezca obvio</div>
+          <div class="alert al-info">ℹ️ <strong>PREGUNTA</strong> al desarrollador anterior todo lo posible antes de que se vaya</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────────────────────
+const SK = 'salvus_v6';
+function loadSt(){ try{ return JSON.parse(localStorage.getItem(SK)||'{}'); }catch{ return {}; } }
+function saveSt(s){ try{ localStorage.setItem(SK,JSON.stringify(s)); }catch{} }
+let ST = Object.assign({days:{},tasks:{},checks:{},exams:{}}, loadSt());
+function save(){ saveSt(ST); }
+
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const TAG_STYLE = {
+  laravel:{bg:'#FDECEA',c:'#9B2335'}, php:{bg:'#EDEBFC',c:'#3D2FA0'},
+  sql:{bg:'#E4F6EE',c:'#135F35'}, git:{bg:'#FEF3E2',c:'#7A3E07'},
+  server:{bg:'#FDE8F0',c:'#7A1E45'}, debug:{bg:'#E3F1E5',c:'#1A4D23'},
+  security:{bg:'#E3EDF9',c:'#14376A'}
+};
+
+const WEEKS = [
+  {id:1,color:'#1B3A5C',label:'Fase 1 — Supervivencia',title:'Exploración del territorio',
+   goal:'Tener el proyecto corriendo en local y entender su estructura completa.',
+   days:[
+    {d:1,title:'Configurar entorno + primer contacto',tags:['laravel','git'],
+     study:'Documentación oficial Laravel: laravel.com/docs/structure. Video: "Laravel 11 Crash Course" de Traversy Media en YouTube.',
+     practice:'git clone [url] → composer install → npm install → cp .env.example .env → php artisan key:generate → php artisan serve → abrir localhost:8000',
+     tasks:['Ver el login del CRM en localhost:8000','Leer el README.md del proyecto completo','Anotar todas las dudas en tu diario técnico']},
+    {d:2,title:'Estructura del proyecto Laravel',tags:['laravel'],
+     study:'laravel.com/docs/structure — leer toda la sección. Foco en: app/Models, app/Http/Controllers, routes/, config/, database/, resources/views/',
+     practice:'Explorar TODAS las carpetas. Ejecutar: php artisan route:list. Listar todos los Modelos y Controladores del proyecto.',
+     tasks:['Listar todos los modelos y su entidad de negocio','Agrupar controladores por área funcional','Dibujar mapa de entidades del sistema en papel']},
+    {d:3,title:'Git profesional para proyectos heredados',tags:['git'],
+     study:'Pro Git Book cap. 1-2: git-scm.com/book. Conceptos: commit, branch, merge, push, pull, stash, gitignore, git log.',
+     practice:'git log --oneline --graph --all (estudia el historial del proyecto). Crear rama: git checkout -b feature/exploracion. Practicar: add → commit → push.',
+     tasks:['Configurar git con nombre y email profesional','Crear tu primera rama de trabajo','Practicar el flujo completo add→commit→push']},
+    {d:4,title:'Base de datos: entender el esquema',tags:['sql'],
+     study:'MySQL Crash Course (Traversy Media YouTube). Laravel Migrations docs: laravel.com/docs/migrations',
+     practice:'Instalar DBeaver o TablePlus. Conectar a BD local. SELECT * FROM tabla LIMIT 5 en cada tabla. Leer todas las migraciones en database/migrations/',
+     tasks:['Instalar DBeaver o TablePlus','Explorar todas las tablas de la BD','Construir diagrama ER del sistema']},
+    {d:5,title:'El flujo Request → Response en Laravel',tags:['laravel','debug'],
+     study:'Laravel Routing, Controllers, Middleware docs. YouTube: "Laravel Request Lifecycle explained".',
+     practice:'Tomar una funcionalidad simple del CRM (listar pacientes). Trazar el flujo completo usando dd() en distintos puntos.',
+     tasks:['Elegir 1 funcionalidad simple del CRM','Trazar flujo ruta→controlador→modelo→vista','Usar dd() para confirmar el flujo']},
+    {d:6,title:'Proyecto semana 1 — parte 1',tags:['laravel','git'],
+     study:'Repaso de los 5 días anteriores. Revisa todas tus notas.',
+     practice:'Crear NOTAS.md en tu repo personal con: mapa de entidades, output de php artisan route:list, descripción de controladores principales.',
+     tasks:['Crear NOTAS.md en tu repositorio personal','Documentar todas las rutas del sistema','Documentar las primeras dudas técnicas']},
+    {d:7,title:'Proyecto semana 1 — parte 2',tags:['sql','git'],
+     study:'Leer todos los seeders del proyecto en database/seeders/.',
+     practice:'Completar documento: diagrama ER final, lista de dependencias (composer.json + package.json), preguntas para el dev anterior.',
+     tasks:['Completar el diagrama ER','Listar todas las dependencias PHP','Escribir preguntas para el desarrollador anterior']},
+  ]},
+  {id:2,color:'#4C3D9E',label:'Fase 1 — Supervivencia',title:'PHP OOP y Eloquent ORM',
+   goal:'Leer y modificar código PHP con confianza. Entender cómo Laravel habla con la BD.',
+   days:[
+    {d:8,title:'PHP Orientado a Objetos',tags:['php'],
+     study:'phptherightway.com — Namespaces, Clases, Interfaces, Traits. Constructores, herencia, type hints.',
+     practice:'Abrir 3 modelos del CRM y analizar: propiedades, métodos, herencia. Crear clase PHP de práctica local.',
+     tasks:['Leer 3 modelos del proyecto y anotar su estructura','Identificar patrones de herencia usados','Crear clase PHP de práctica localmente']},
+    {d:9,title:'Eloquent ORM: modelos y relaciones',tags:['laravel','sql'],
+     study:'Laravel Eloquent + Relationships docs. Video: "Laravel Eloquent ORM Crash Course" en YouTube.',
+     practice:'php artisan tinker → User::all() → User::find(1) → User::where("email","like","%@%")->get(). Explorar relaciones del proyecto.',
+     tasks:['Abrir php artisan tinker','Ejecutar 5 consultas Eloquent distintas','Documentar las relaciones entre modelos del CRM']},
+    {d:10,title:'Migraciones, Seeders y Factories',tags:['laravel','sql'],
+     study:'Laravel Migrations y Seeding docs. Crear tablas, agregar columnas, rollbacks.',
+     practice:'php artisan make:migration add_notes_to_patients_table → editar → migrate → verificar → migrate:rollback',
+     tasks:['Crear una migración de práctica','Ejecutar php artisan migrate exitosamente','Hacer rollback y verificar que revierte']},
+    {d:11,title:'Blade: motor de plantillas',tags:['laravel'],
+     study:'Laravel Blade Templates docs. @extends, @section, @yield, @include, @foreach, @if, @auth, @csrf.',
+     practice:'Localizar vistas en resources/views/. Trazar composición layout + secciones. Modificar texto y verificar.',
+     tasks:['Localizar las vistas principales del CRM','Trazar composición de una vista compleja','Modificar texto en vista y verificar el cambio']},
+    {d:12,title:'Tu primer bug real — día 1',tags:['laravel','debug'],
+     study:'Conventional Commits: feat, fix, docs, style, refactor. Repaso del flujo completo.',
+     practice:'Identificar un bug pequeño en el CRM. Crear rama: git checkout -b fix/descripcion-del-bug.',
+     tasks:['Identificar 1 bug o mejora en el CRM','Crear rama con nombre descriptivo','Entender qué archivo está involucrado']},
+    {d:13,title:'Tu primer bug real — día 2',tags:['laravel','git'],
+     study:'Sin teoría hoy. 100% práctica aplicada.',
+     practice:'Hacer el cambio mínimo necesario. Probar en local. git commit -m "fix: descripción clara del cambio".',
+     tasks:['Implementar el fix en el código','Probar que funciona correctamente en local','Commit con mensaje Conventional Commits']},
+    {d:14,title:'Revisión semana 2',tags:['git'],
+     study:'Repaso: Eloquent, Blade, Migraciones, primer fix.',
+     practice:'Documentar el bug corregido. Crear 2 GitHub Issues con bugs o mejoras identificadas.',
+     tasks:['Escribir resumen semanal en el diario técnico','Crear 2 GitHub Issues con bugs identificados','Subir el PR del primer fix a GitHub']},
+  ]},
+  {id:3,color:'#B83232',label:'Fase 1 — Supervivencia',title:'Autenticación, Roles y Seguridad',
+   goal:'Entender cómo el CRM protege los datos sensibles de los pacientes.',
+   days:[
+    {d:15,title:'Sistema de autenticación Laravel',tags:['laravel','security'],
+     study:'Laravel Authentication + Authorization docs. Sesiones, guards, providers, tokens, remember me.',
+     practice:'Rastrear flujo de login completo. Identificar el guard usado. Examinar middlewares de las rutas.',
+     tasks:['Trazar el flujo de login completo','Identificar qué guard usa el sistema','Listar todos los middlewares activos en rutas']},
+    {d:16,title:'Roles y permisos con Spatie',tags:['laravel','security'],
+     study:'Spatie Laravel Permission: spatie.be/docs/laravel-permission. Roles vs. permisos, asignación, verificación.',
+     practice:'En tinker: Role::all(), Permission::all(). Qué puede hacer cada rol: admin, nutricionista, recepcionista.',
+     tasks:['Listar todos los roles del sistema en tinker','Listar todos los permisos del sistema','Documentar la matriz de roles y permisos']},
+    {d:17,title:'OWASP Top 10 y seguridad básica',tags:['security'],
+     study:'owasp.org/Top10 — los 5 primeros. Laravel: CSRF, validación de inputs, prevención SQL injection.',
+     practice:'Verificar @csrf en todos los forms. Verificar que inputs pasan por validate(). Buscar queries SQL crudas.',
+     tasks:['Verificar @csrf en todos los formularios','Verificar validación en controladores','Documentar hallazgos de seguridad como Issues']},
+    {d:18,title:'Fix de seguridad: agregar validación',tags:['security','git'],
+     study:'Laravel Form Request Validation docs. Reglas de validación disponibles.',
+     practice:'Agregar validación faltante. Rama → fix → prueba → commit → PR.',
+     tasks:['Crear rama de fix de seguridad','Agregar validación al formulario','Crear PR con descripción del problema y solución']},
+    {d:19,title:'Fix de bug #2',tags:['laravel','debug'],
+     study:'Laravel Error Handling docs. Jerarquía de excepciones PHP.',
+     practice:'Identificar y corregir segundo bug real. Rama, fix, prueba, commit, PR.',
+     tasks:['Identificar bug #2 en el sistema','Implementar el fix con ramas y PR','Commit y PR con descripción clara']},
+    {d:20,title:'Logs de Laravel y fix de bug #3',tags:['debug','laravel'],
+     study:'Laravel Logging docs. Niveles: debug, info, warning, error, critical. storage/logs/laravel.log',
+     practice:'tail -f storage/logs/laravel.log. Identificar errores existentes. Fix de bug #3 basado en los logs.',
+     tasks:['Leer los logs actuales del proyecto','Identificar al menos 1 error en los logs','Corregir el error encontrado']},
+    {d:21,title:'Revisión semana 3',tags:['git'],
+     study:'Repaso: auth, roles, seguridad, 3 bugs corregidos.',
+     practice:'Documentar los 3 bugs: qué era, por qué fallaba, solución, aprendizaje.',
+     tasks:['Documentar los 3 bugs corregidos con detalle','Actualizar NOTAS.md con aprendizajes','Revisar todos los PRs abiertos']},
+  ]},
+  {id:4,color:'#0D7C76',label:'Fase 1 — Supervivencia',title:'Debugging profesional',
+   goal:'Diagnosticar y resolver cualquier error del sistema de forma independiente.',
+   days:[
+    {d:22,title:'Laravel Debugbar y Telescope',tags:['debug','laravel'],
+     study:'Laravel Debugbar docs. Telescope docs. dd() vs dump() vs Log::info() — cuándo usar cada uno.',
+     practice:'composer require barryvdh/laravel-debugbar --dev. Activar y observar queries, tiempo de carga.',
+     tasks:['Instalar Laravel Debugbar','Identificar 3 páginas del CRM con más queries','Detectar queries lentas o duplicadas']},
+    {d:23,title:'Queries N+1 y Eager Loading',tags:['debug','laravel','sql'],
+     study:'Qué es el problema N+1, por qué es grave en un CRM con muchos pacientes, cómo detectarlo con Debugbar.',
+     practice:'Identificar 2-3 queries N+1 en el proyecto. Solucionarlas con ->with() (eager loading).',
+     tasks:['Identificar 2 queries N+1 con Debugbar','Corregirlas con eager loading','Verificar mejora en el número de queries']},
+    {d:24,title:'Xdebug con VS Code',tags:['debug'],
+     study:'Guía de instalación Xdebug. PHP Debug extension en VS Code. Configurar launch.json.',
+     practice:'Instalar Xdebug. Poner breakpoint en controlador. Inspeccionar variables paso a paso.',
+     tasks:['Instalar Xdebug en entorno local','Configurar VS Code para PHP debugging','Primer debug con breakpoints en un controlador']},
+    {d:25,title:'Errores silenciosos y catch vacíos',tags:['debug','laravel'],
+     study:'Anti-patterns: catch vacíos, retornar false sin explicación, swallowing exceptions.',
+     practice:'Buscar catch vacíos en el código del CRM. Documentar hallazgos como Issues de calidad.',
+     tasks:['Buscar catch vacíos en el proyecto','Identificar funciones con manejo incorrecto de errores','Crear Issues de calidad en GitHub']},
+    {d:26,title:'GitHub Issues: gestión profesional',tags:['git'],
+     study:'Buenas prácticas de Issues: labels, milestones, plantillas de reporte de bugs.',
+     practice:'Crear 5+ Issues bien documentados con: descripción, pasos para reproducir, causa probable, prioridad.',
+     tasks:['Crear 5+ Issues documentados en GitHub','Agregar labels de prioridad y tipo','Ordenar Issues por impacto en el negocio']},
+    {d:27,title:'DB::getQueryLog y EXPLAIN en SQL',tags:['debug','sql'],
+     study:'DB::enableQueryLog() y getQueryLog(). EXPLAIN para analizar planes de ejecución SQL.',
+     practice:'Usar DB::getQueryLog() en un controlador. Analizar las queries más importantes con EXPLAIN.',
+     tasks:['Implementar DB::getQueryLog() en un controlador','Analizar 3 queries con EXPLAIN en la BD','Documentar las queries problemáticas encontradas']},
+    {d:28,title:'Consolidación Fase 1 — autoevaluación',tags:['laravel','git','debug'],
+     study:'Repaso integral días 1-28: estructura, PHP, Eloquent, Auth, Seguridad, Debugging.',
+     practice:'Autoevaluación honesta: ¿qué entiendo del sistema? ¿qué falta? Actualizar toda la documentación.',
+     tasks:['Completar autoevaluación de la Fase 1','Actualizar NOTAS.md con todo lo aprendido','Planificar los próximos 30 días']},
+  ]},
+  {id:5,color:'#C55A11',label:'Fase 2 — Independencia',title:'APIs y Integraciones',
+   goal:'Entender, modificar y crear APIs. Conectar servicios externos.',
+   days:[
+    {d:29,title:'APIs RESTful: fundamentos',tags:['laravel'],
+     study:'REST: verbos HTTP, códigos de estado (200/201/400/401/404/422/500), JSON, headers. Laravel API Resources docs.',
+     practice:'Instalar Postman o Insomnia (gratis). Mapear todos los endpoints de API del CRM. Probar el endpoint de login.',
+     tasks:['Instalar Postman o Insomnia','Listar todos los endpoints de API del CRM','Probar endpoint de login y obtener token']},
+    {d:30,title:'Sanctum y autenticación de APIs',tags:['laravel','security'],
+     study:'Laravel Sanctum docs. Bearer tokens, scopes, autenticación SPA.',
+     practice:'Probar autenticación con token Bearer en Postman. Flujo: login → token → request autenticado.',
+     tasks:['Probar todos los endpoints protegidos en Postman','Entender el flujo completo de autenticación API','Documentar endpoints con sus parámetros']},
+    {d:31,title:'API Resources y transformación',tags:['laravel'],
+     study:'Laravel API Resources docs. Transformar modelos Eloquent en JSON estructurado.',
+     practice:'Analizar Resources existentes en el proyecto. Crear un Resource de práctica.',
+     tasks:['Leer todos los API Resources del proyecto','Crear un Resource de práctica','Personalizar respuesta JSON con campos calculados']},
+    {d:32,title:'Queues, Jobs y Events básicos',tags:['laravel'],
+     study:'Laravel Queues + Jobs + Events docs. Cuándo usar colas: emails, reportes pesados, integraciones.',
+     practice:'Listar Jobs y Events del proyecto (app/Jobs/, app/Events/). php artisan queue:work.',
+     tasks:['Listar todos los Jobs del proyecto','Identificar driver de cola usado','Procesar cola con php artisan queue:work']},
+    {d:33,title:'Implementar endpoint de API propio',tags:['laravel','git'],
+     study:'Repaso: Resources, autenticación, rutas API, controladores API.',
+     practice:'Implementar GET /api/patients/{id}/appointments. Rama → ruta → controlador → Resource → Postman → commit.',
+     tasks:['Crear la ruta de API en routes/api.php','Crear controlador de API','Probar el endpoint en Postman con autenticación']},
+    {d:34,title:'Documentación de la API',tags:['laravel'],
+     study:'Swagger/OpenAPI básico. Alternativa simple y práctica: documentar todo en Markdown.',
+     practice:'Crear API_DOCS.md con todos los endpoints: método, ruta, parámetros, respuesta de ejemplo.',
+     tasks:['Crear API_DOCS.md en el repositorio','Documentar todos los endpoints existentes','Agregar ejemplos de request y response para cada uno']},
+    {d:35,title:'Revisión semana 5',tags:['laravel'],
+     study:'Repaso: APIs, Queues, Resources, Sanctum.',
+     practice:'Revisar y pulir la documentación de la API. Verificar que todos los endpoints funcionan.',
+     tasks:['Revisar que API_DOCS.md está completa','Probar todos los endpoints documentados','Compartir documentación en el repositorio']},
+  ]},
+  {id:6,color:'#1A7A4A',label:'Fase 2 — Independencia',title:'SQL Avanzado y Reportes',
+   goal:'Dominar consultas complejas. Implementar exportaciones y reportes para la clínica.',
+   days:[
+    {d:36,title:'JOINs avanzados y subconsultas',tags:['sql'],
+     study:'INNER, LEFT, RIGHT, FULL JOIN. Subconsultas. CTEs (WITH). SQLZoo.net para práctica interactiva y gratuita.',
+     practice:'Escribir 5 consultas SQL con JOINs: pacientes con sus citas, nutricionistas con pacientes activos.',
+     tasks:['Completar ejercicios de JOINs en SQLZoo.net','Consulta: pacientes con sus últimas citas','Consulta: resumen de actividad por nutricionista']},
+    {d:37,title:'Índices, EXPLAIN y transacciones',tags:['sql'],
+     study:'Índices: tipos (B-tree, hash), cuándo crearlos y cuándo no. EXPLAIN. Transacciones ACID.',
+     practice:'EXPLAIN en las 3 queries más usadas del CRM. Identificar tablas sin índices en columnas consultadas frecuentemente.',
+     tasks:['Analizar 3 queries con EXPLAIN en la BD','Identificar 2 tablas que necesitan índices','Crear 1 índice de optimización y medir su impacto']},
+    {d:38,title:'Exportación a Excel con Laravel',tags:['laravel','sql'],
+     study:'maatwebsite/excel docs. Instalación y uso básico para generar archivos Excel.',
+     practice:'composer require maatwebsite/excel. Crear clase Export. Implementar descarga de lista de pacientes en Excel.',
+     tasks:['Instalar maatwebsite/excel','Crear clase Export para lista de pacientes','Implementar y probar la descarga del archivo Excel']},
+    {d:39,title:'Generación de PDFs con Laravel',tags:['laravel'],
+     study:'barryvdh/laravel-dompdf docs. Vistas Blade como plantillas de PDF.',
+     practice:'Instalar dompdf. Template Blade para historial de paciente. Implementar ruta de descarga PDF.',
+     tasks:['Instalar barryvdh/laravel-dompdf','Crear template Blade para el historial PDF','Implementar y probar la descarga del PDF']},
+    {d:40,title:'Dashboard de indicadores del negocio',tags:['laravel','sql'],
+     study:'Eloquent: count(), sum(), avg(), groupBy(). whereBetween, whereDate, whereMonth.',
+     practice:'Implementar /api/dashboard/summary con: pacientes nuevos del mes, citas completadas, ingresos.',
+     tasks:['Crear consultas SQL para los indicadores del dashboard','Implementar endpoint /api/dashboard/summary','Mostrar datos en la vista del dashboard']},
+    {d:41,title:'Optimizar queries del proyecto',tags:['sql','debug'],
+     study:'Eager loading: ->with() y ->load(). chunk() para procesar grandes volúmenes de datos.',
+     practice:'Corregir las queries N+1 identificadas antes usando eager loading. Verificar mejora con Debugbar.',
+     tasks:['Corregir 2 queries N+1 con eager loading','Verificar la mejora con Laravel Debugbar','Documentar la optimización realizada']},
+    {d:42,title:'SQL_QUERIES.md y revisión semana 6',tags:['sql'],
+     study:'Repaso: JOINs avanzados, índices, Excel, PDF, dashboard, optimizaciones.',
+     practice:'Crear SQL_QUERIES.md con las 10 consultas SQL más útiles para el negocio de la clínica.',
+     tasks:['Crear SQL_QUERIES.md en el repositorio','Documentar 10 consultas útiles para el negocio','Presentar el reporte Excel y PDF funcionando']},
+  ]},
+  {id:7,color:'#3D4D5C',label:'Fase 2 — Independencia',title:'Servidores y Despliegues',
+   goal:'Realizar despliegues seguros y gestionar el servidor de producción con autonomía.',
+   days:[
+    {d:43,title:'Linux básico para desarrolladores',tags:['server'],
+     study:'Comandos Linux esenciales: cd, ls, cat, tail, grep, chmod, chown, systemctl, df, free, top.',
+     practice:'Si tienes acceso SSH: conectar y practicar navegación. Leer archivos de configuración del servidor.',
+     tasks:['Practicar 10 comandos Linux básicos','Conectar al servidor por SSH','Localizar el código del CRM en el servidor']},
+    {d:44,title:'Nginx/Apache y PHP-FPM',tags:['server'],
+     study:'Virtual Hosts en Nginx. PHP-FPM. Variables de entorno en producción vs desarrollo.',
+     practice:'Localizar configuración de Nginx del CRM. Entender cómo apunta al directorio del proyecto.',
+     tasks:['Leer la configuración de Nginx del proyecto','Localizar los logs del servidor web','Entender diferencia .env local vs producción']},
+    {d:45,title:'Variables de entorno en producción',tags:['server','security'],
+     study:'12-Factor App factor III: Config. APP_DEBUG=false en producción. APP_ENV=production.',
+     practice:'Verificar APP_DEBUG=false y APP_ENV=production en el servidor. Las claves API solo en el servidor.',
+     tasks:['Verificar APP_DEBUG=false en producción','Verificar APP_ENV=production en el servidor','Verificar que .env no está en el repositorio Git']},
+    {d:46,title:'Proceso de despliegue documentado',tags:['server','git'],
+     study:'Laravel Deployment docs: laravel.com/docs/deployment. El checklist completo de despliegue.',
+     practice:'Documentar el proceso de despliegue actual. Crear DEPLOY.md en el repositorio.',
+     tasks:['Documentar el proceso de despliegue paso a paso','Crear archivo DEPLOY.md en el repositorio','Identificar qué comandos se ejecutan en cada deploy']},
+    {d:47,title:'Tu primer despliegue completo',tags:['server','git'],
+     study:'Checklist: git pull → composer install --no-dev → migrate --force → config:cache → queue:restart.',
+     practice:'Realizar un despliegue real (aunque sea de un cambio pequeño) siguiendo el checklist completo.',
+     tasks:['Seguir el checklist de despliegue paso a paso','Verificar que el sitio funciona después del deploy','Monitorear los logs 30 minutos post-deploy']},
+    {d:48,title:'Backups de base de datos',tags:['server','sql'],
+     study:'mysqldump. Estrategias de backup: diario, semanal, mensual. Verificación de integridad del backup.',
+     practice:'mysqldump -u user -p db_name > backup_$(date +%Y%m%d).sql. Verificar que el backup es restaurable.',
+     tasks:['Hacer backup manual de la base de datos','Verificar que el backup se puede restaurar','Documentar proceso de backup y restauración']},
+    {d:49,title:'Consolidación Fase 2 — revisión completa',tags:['server','git'],
+     study:'Repaso integral semanas 5-7: APIs, SQL avanzado, servidor, despliegues.',
+     practice:'Completar DEPLOY.md. Verificar que toda la documentación esté actualizada.',
+     tasks:['Completar DEPLOY.md con el proceso completo','Revisar que toda la documentación está actualizada','Definir las próximas 3 funcionalidades a implementar']},
+  ]},
+];
+
+const EXAMS = {
+  php:{title:'PHP Orientado a Objetos',color:'#4C3D9E',qs:[
+    {q:'¿Qué devuelve el operador ?? (null coalescing) en PHP 8?',
+     opts:['Divide dos valores y maneja división por cero','Devuelve el primer operando si no es null, de lo contrario el segundo','Compara tipos estrictamente como ===','Es un alias mejorado de isset()'],
+     c:1,exp:'El operador ?? devuelve el operando izquierdo si no es null. Si es null, devuelve el derecho. Ej: $name = $user->name ?? "Anónimo"; Si name es null, devuelve "Anónimo". Muy útil para valores por defecto.'},
+    {q:'¿Cuál es la diferencia fundamental entre == y === en PHP?',
+     opts:['No hay diferencia en PHP 8 moderno','== compara valor y tipo; === solo compara el valor','== hace comparación laxa (solo valor); === compara valor Y tipo estrictamente','=== es más lento pero equivalente en resultado'],
+     c:2,exp:'== es laxa: 0 == "0" es TRUE, 0 == false es TRUE. === es estricta: 0 === "0" es FALSE porque son tipos distintos (int vs string). Siempre usa === para comparaciones precisas en código de producción.'},
+    {q:'¿Para qué sirve un trait en PHP?',
+     opts:['Es una interfaz que obliga a implementar métodos','Es una clase que no puede instanciarse directamente','Permite reutilizar conjuntos de métodos en múltiples clases sin herencia múltiple','Es equivalente a una clase abstracta con métodos concretos'],
+     c:2,exp:'Los traits permiten reutilizar métodos en clases independientes, resolviendo el problema de herencia múltiple en PHP. Ejemplo: un trait Auditable (con métodos de registro de cambios) puede usarse en Patient, Appointment e Invoice sin herencia.'},
+    {q:'¿Cómo se declara correctamente un método abstracto?',
+     opts:['abstract function nombre() {}','abstract function nombre();','virtual function nombre() {}','abstract void nombre()'],
+     c:1,exp:'Los métodos abstractos se declaran SIN cuerpo (sin {}). La clase que los contiene debe ser abstract también. Las clases hijas concretas están obligadas a implementarlos o PHP lanzará un error fatal.'},
+    {q:'¿Qué hace el nullsafe operator ?-> de PHP 8?',
+     opts:['Verifica si el objeto no es null antes de llamar el método, devolviendo null si lo es','Convierte null automáticamente en un objeto vacío','Lanza una excepción personalizada si el objeto es null','Es equivalente al operador ternario ?:'],
+     c:0,exp:'$user?->profile?->avatar — si $user o $profile son null, devuelve null en lugar de lanzar "Call to member function on null". Elimina múltiples if($user !== null) anidados. Disponible desde PHP 8.0.'},
+  ]},
+  laravel:{title:'Laravel Framework',color:'#B83232',qs:[
+    {q:'¿Qué hace php artisan route:cache?',
+     opts:['Limpia el archivo de caché de rutas existente','Compila y cachea todas las rutas en un archivo para mayor rendimiento en producción','Lista las rutas actualmente cacheadas','Recarga las rutas sin reiniciar el servidor'],
+     c:1,exp:'Compila todas las rutas en un único archivo PHP para mejorar el rendimiento en producción. IMPORTANTE: no funciona con rutas que usen Closures (funciones anónimas) — deben usar controladores con métodos nombrados.'},
+    {q:'¿En qué tabla vive la foreign key en una relación hasMany/belongsTo?',
+     opts:['En la tabla del modelo que declara hasMany','En ambas tablas para garantizar integridad','En la tabla del modelo que declara belongsTo (el lado "muchos")','En una tabla pivote intermedia creada automáticamente'],
+     c:2,exp:'Post hasMany Comments → la FK post_id vive en la tabla comments. Comment belongsTo Post. Regla: la FK siempre está en la tabla del "muchos", que es la que declara belongsTo. La clave foránea apunta al padre (el "uno").'},
+    {q:'¿Qué es el Service Container de Laravel?',
+     opts:['Base de datos clave-valor para servicios externos','Contenedor IoC que gestiona y resuelve dependencias automáticamente','Registro de conexiones a APIs externas','Sistema de caché para respuestas HTTP'],
+     c:1,exp:'El Service Container gestiona las dependencias. Cuando un controlador necesita una dependencia en su constructor, Laravel la instancia e inyecta automáticamente. Este patrón se llama inversión de control (IoC) o inyección de dependencias.'},
+    {q:'¿Para qué sirve @csrf en formularios Blade?',
+     opts:['Aplica estilos CSS predefinidos al formulario','Genera campo oculto con token que protege contra ataques CSRF','Valida los datos del formulario antes de enviarlos','Indica que el formulario usa conexión HTTPS'],
+     c:1,exp:'@csrf genera un input hidden con un token único por sesión. El middleware VerifyCsrfToken lo valida en cada POST/PUT/DELETE para prevenir que sitios maliciosos hagan requests no autorizados en nombre del usuario autenticado.'},
+    {q:'¿Qué problema resuelve el eager loading (->with()) en Eloquent?',
+     opts:['Carga modelos más rápido usando caché de Redis','Previene el problema N+1: en lugar de N+1 queries hace solo 2','Carga relaciones de forma asíncrona en paralelo','Comprime y optimiza los resultados de las consultas'],
+     c:1,exp:'Sin eager loading: 100 pacientes + mostrar nutricionista de cada uno = 101 queries. Con Patient::with("nutritionist")->get() = 2 queries totales. En un CRM con cientos de registros, la diferencia en rendimiento es enorme.'},
+  ]},
+  sql:{title:'SQL y Base de datos',color:'#1A7A4A',qs:[
+    {q:'¿Cuál es la diferencia entre INNER JOIN y LEFT JOIN?',
+     opts:['INNER JOIN es más rápido en todos los casos','INNER JOIN devuelve solo registros con match en ambas tablas; LEFT JOIN devuelve todos los de la tabla izquierda','LEFT JOIN solo funciona dentro de la misma base de datos','No hay diferencia real en los resultados, solo en la sintaxis'],
+     c:1,exp:'INNER JOIN: solo pacientes que tienen citas. LEFT JOIN: TODOS los pacientes, con NULL en columnas de citas si no tienen ninguna. Para "listar pacientes sin citas este mes": LEFT JOIN + WHERE a.id IS NULL es la solución correcta.'},
+    {q:'¿Para qué sirve EXPLAIN antes de una SELECT?',
+     opts:['Muestra los resultados de la query con formato más detallado','Analiza cómo MySQL ejecutará la query: índices usados, filas escaneadas, tipo de join','Ejecuta la query y mide con exactitud el tiempo de respuesta','Valida la sintaxis SQL sin ejecutar la consulta'],
+     c:1,exp:'EXPLAIN muestra el plan de ejecución: si usa índices, cuántas filas escanea, tipo de join utilizado. Si ves "type: ALL" con "rows: 50000", hay un problema de performance que un índice puede resolver drásticamente.'},
+    {q:'¿Qué significa que una transacción de BD sea ACID?',
+     opts:['Atomicity, Concurrency, Isolation, Durability','Atomicity, Consistency, Isolation, Durability','Authenticity, Consistency, Integrity, Durability','Availability, Consistency, Isolation, Distribution'],
+     c:1,exp:'ACID: Atómica (todo o nada), Consistente (mantiene la integridad referencial), Aislada (no interfiere con otras transacciones paralelas), Durable (los cambios persisten al hacer COMMIT). Crítico para datos de salud donde una operación no puede quedar a medias.'},
+    {q:'¿Cuándo conviene crear un índice en una columna?',
+     opts:['En todas las columnas de todas las tablas del sistema','Solo en columnas de tipo INT y columnas de clave primaria','En columnas usadas frecuentemente en cláusulas WHERE, JOIN u ORDER BY','Solo en la columna de clave primaria de cada tabla'],
+     c:2,exp:'Los índices aceleran búsquedas frecuentes PERO agregan overhead en INSERT/UPDATE/DELETE. Crea índices en: FKs usadas en JOIN, columnas con alta cardinalidad en WHERE. Evítalos en columnas con pocos valores distintos (ej: columna "sexo" con solo 2 valores).'},
+    {q:'¿Qué hace GROUP BY en una consulta SQL?',
+     opts:['Ordena los resultados de menor a mayor por la columna indicada','Agrupa filas con el mismo valor para aplicar funciones de agregación como COUNT, SUM, AVG','Filtra los resultados después de la agrupación (eso es HAVING, no GROUP BY)','Es un alias de ORDER BY que permite ordenar por múltiples columnas'],
+     c:1,exp:'GROUP BY agrupa filas con valores iguales. Ejemplo: SELECT nutritionist_id, COUNT(*) as total FROM patients GROUP BY nutritionist_id → te da cuántos pacientes tiene cada nutricionista. Se combina con HAVING para filtrar los grupos resultantes.'},
+  ]},
+  git:{title:'Git y Control de versiones',color:'#C55A11',qs:[
+    {q:'¿Cuál es la diferencia principal entre git merge y git rebase?',
+     opts:['Son completamente equivalentes, solo cambia la sintaxis','merge crea un merge commit preservando el historial completo; rebase reescribe el historial de forma lineal','rebase es más seguro que merge para trabajar en ramas compartidas con el equipo','merge solo funciona con ramas locales, rebase funciona con ramas remotas'],
+     c:1,exp:'merge preserva el historial real creando un "merge commit". rebase mueve tus commits encima de la rama destino, creando un historial lineal más limpio. REGLA DE ORO: NUNCA hagas rebase en ramas compartidas (main, develop) porque reescribe el historial público.'},
+    {q:'¿Qué hace exactamente git stash?',
+     opts:['Guarda permanentemente los cambios actuales como un commit oculto en el historial','Guarda temporalmente los cambios no commiteados para limpiar el working directory','Elimina permanentemente todos los cambios no commiteados del proyecto','Crea automáticamente una rama temporal con todos los cambios actuales'],
+     c:1,exp:'git stash guarda tus cambios en una pila temporal y limpia el working directory. Útil para cambiar de contexto rápidamente sin hacer un commit. Recuperas los cambios con git stash pop (aplica y elimina) o git stash apply (aplica y mantiene en la pila).'},
+    {q:'¿Cuál es la diferencia entre git revert y git reset --hard?',
+     opts:['Son idénticos en resultado, solo difieren en la sintaxis del comando','git revert crea un nuevo commit que invierte cambios (seguro); git reset --hard borra commits del historial (peligroso en ramas compartidas)','git reset --hard es más seguro para usar en ramas compartidas con el equipo','git revert solo puede revertir el commit más reciente de la rama'],
+     c:1,exp:'git revert es SEGURO: crea un commit que deshace los cambios del commit indicado, preservando el historial. git reset --hard DESTRUYE commits del historial local. Si ya hiciste push de esos commits, causará problemas graves al resto del equipo.'},
+    {q:'¿Qué es un Pull Request (PR) y para qué sirve?',
+     opts:['Es el comando git pull ejecutado de forma remota en el servidor','Una solicitud formal para fusionar una rama en otra, que permite revisión de código antes del merge','Una forma de solicitar permisos de escritura a un repositorio remoto en GitHub','Un mecanismo de backup automático que se activa al hacer push a cualquier rama'],
+     c:1,exp:'Un PR es una propuesta para fusionar cambios. Permite revisar el código antes de llegar a main, discutir cambios, ver las diferencias line-by-line, ejecutar tests automáticos. Es la práctica estándar de equipos profesionales para mantener la calidad del código.'},
+    {q:'¿Para qué sirven Conventional Commits?',
+     opts:['Es un sistema de autenticación de dos factores para cuentas de GitHub Enterprise','Es un estándar para mensajes de commit legibles por humanos y que habilitan automatización','Es una herramienta gráfica para resolver conflictos de merge en el repositorio','Es un sistema de versionado semántico automático aplicado directamente a las ramas'],
+     c:1,exp:'Conventional Commits (feat:, fix:, docs:, chore:, etc.) estandarizan los mensajes de commit. Beneficios: historial legible para cualquier persona, posibilidad de generar CHANGELOGs automáticamente, y poder saber el tipo de cambio sin leer el diff completo.'},
+  ]},
+  security:{title:'Seguridad web aplicada',color:'#1B3A5C',qs:[
+    {q:'¿Qué es un ataque CSRF y cómo lo previene Laravel?',
+     opts:['Un ataque de inyección SQL que Eloquent previene automáticamente con parámetros vinculados','Un ataque que fuerza al navegador del usuario autenticado a hacer requests no autorizados; Laravel lo previene con tokens @csrf','Un ataque de fuerza bruta sobre contraseñas que se mitiga con rate limiting en las rutas de login','Un ataque XSS de inyección de scripts que se previene escapando correctamente el HTML de las vistas'],
+     c:1,exp:'CSRF: un sitio malicioso hace que el navegador del usuario autenticado envíe requests no deseados a tu aplicación. Laravel genera un token único por sesión con @csrf y el middleware VerifyCsrfToken lo valida en cada POST/PUT/DELETE.'},
+    {q:'¿Por qué NUNCA se deben guardar contraseñas en texto plano en la base de datos?',
+     opts:['Porque ocupan más espacio de almacenamiento que un hash de bcrypt','Si la BD es comprometida, el atacante obtiene directamente las contraseñas de todos los usuarios del sistema','Porque PHP 8 ya no permite operaciones de comparación con contraseñas en texto plano','Porque los navegadores modernos bloquean el envío de contraseñas en texto plano'],
+     c:1,exp:'Contraseñas en texto plano = acceso inmediato a todas las cuentas si la BD es hackeada (y los usuarios reutilizan contraseñas en otros servicios). Con bcrypt/argon2, el atacante obtiene hashes computacionalmente muy costosos de revertir. En Laravel usa Hash::make($password).'},
+    {q:'¿Cómo previene Laravel automáticamente la SQL Injection?',
+     opts:['Es una técnica de optimización; Laravel la aplica automáticamente con Eloquent','Usando PDO prepared statements en Eloquent y Query Builder — los inputs del usuario nunca se concatenan directamente en el SQL','Es una técnica de backup de BD que Laravel gestiona con comandos Artisan','Es un tipo de índice especial que Laravel crea automáticamente en columnas frecuentes'],
+     c:1,exp:'SQL Injection: concatenar input del usuario en SQL permite inyectar código malicioso. Laravel usa PDO prepared statements: User::where("email", $email) es completamente seguro porque el input nunca toca el SQL directamente — se envía como parámetro separado.'},
+    {q:'¿Qué información NO debe estar commitada en el repositorio Git?',
+     opts:['El nombre de la aplicación y la configuración del idioma (APP_NAME, APP_LOCALE)','El entorno y URL base de la aplicación (APP_ENV y APP_URL)','Credenciales de base de datos, claves API, APP_KEY — todo el .env con valores reales','Solo la configuración del servidor de correo (host, puerto, usuario y contraseña)'],
+     c:2,exp:'El .env NUNCA va a Git. Contiene: contraseñas de BD, claves API de terceros (Stripe, Twilio, etc.), APP_KEY (clave de cifrado de sesiones y cookies). Verifica que .env está en .gitignore. El .env.example SÍ puede estar en el repo, pero sin valores reales.'},
+    {q:'¿Qué significa el principio de mínimo privilegio en un CRM de salud?',
+     opts:['Que todos los usuarios tengan acceso completo al sistema para maximizar la productividad','Que cada usuario solo tenga los permisos estrictamente necesarios para cumplir su función específica','Que solo el administrador del sistema tenga acceso directo a la base de datos de producción','Que los roles de usuario se roten periódicamente por razones de seguridad y auditoría'],
+     c:1,exp:'Recepcionista: no necesita ver historias clínicas completas ni informes financieros. Nutricionista: no necesita acceso a la configuración del sistema ni a datos de otros profesionales. Si un rol es comprometido, el daño queda limitado a lo que ese rol puede hacer — no expone datos de toda la clínica.'},
+  ]},
+};
+
+const CHECKLIST = [
+  {cat:'PHP y Laravel',icon:'⚡',color:'#4C3D9E',items:[
+    'Puedo leer y modificar cualquier clase PHP del proyecto sin ayuda externa',
+    'Entiendo OOP: clases, herencia, interfaces, traits, constructores',
+    'Domino Eloquent: modelos, relaciones, scopes, accessors, mutators',
+    'Entiendo el Service Container y la inyección de dependencias de Laravel',
+    'Puedo crear migraciones y ejecutarlas de forma segura en producción',
+    'Creo y documento APIs con API Resources y autenticación Sanctum',
+    'Entiendo Queues, Jobs y Events básicos del proyecto',
+    'Uso todos los comandos Artisan con confianza y sin consultar documentación',
+  ]},
+  {cat:'Base de datos',icon:'🗄️',color:'#1A7A4A',items:[
+    'Escribo SQL complejo con JOINs, subconsultas y GROUP BY',
+    'Entiendo cuándo y cómo crear índices para optimizar consultas',
+    'Uso transacciones cuando la operación requiere atomicidad (todo o nada)',
+    'Puedo hacer y restaurar backups de MySQL/MariaDB sin ayuda',
+    'Analizo el rendimiento de queries lentas con la instrucción EXPLAIN',
+  ]},
+  {cat:'Git y flujo de trabajo',icon:'🔀',color:'#C55A11',items:[
+    'Trabajo siempre en ramas separadas, nunca directamente en main',
+    'Mis commits siguen el estándar Conventional Commits (feat, fix, docs...)',
+    'Hago merge, resuelvo conflictos y revierto commits con confianza',
+    'Uso Pull Requests para todas las funcionalidades nuevas y fixes',
+    'Domino: git log, git blame, git stash, git diff, git cherry-pick',
+  ]},
+  {cat:'Debugging y calidad',icon:'🐛',color:'#0D7C76',items:[
+    'Diagnostico cualquier error del sistema de forma completamente independiente',
+    'Uso Laravel Telescope y Debugbar activamente durante el desarrollo',
+    'Leo e interpreto los logs del sistema con fluidez y rapidez',
+    'He escrito al menos 10 tests básicos (PHPUnit o Pest)',
+    'Identifico y resuelvo queries N+1 con eager loading',
+  ]},
+  {cat:'Servidores y despliegues',icon:'🖥️',color:'#3D4D5C',items:[
+    'Realizo despliegues completos al servidor de producción sin ayuda externa',
+    'Entiendo la configuración de Nginx/Apache del proyecto',
+    'Diagnostico problemas en el servidor: logs, permisos, servicios caídos',
+    'Tengo el proceso de despliegue documentado en DEPLOY.md',
+    'Reinicio nginx, php-fpm y workers de cola cuando es necesario',
+  ]},
+  {cat:'Seguridad web',icon:'🔒',color:'#B83232',items:[
+    'Conozco el OWASP Top 10 y su aplicación específica en el CRM de nutrición',
+    'Verifiqué que el sistema tiene CSRF, validación y autenticación correctos',
+    'Los datos sensibles de pacientes están protegidos adecuadamente',
+    'Las contraseñas se almacenan con bcrypt/argon2 (nunca en texto plano)',
+    'El .env de producción con valores reales no está en el repositorio Git',
+  ]},
+  {cat:'Documentación y comunicación',icon:'📝',color:'#1B3A5C',items:[
+    'El README.md del proyecto está actualizado y completamente documentado',
+    'Tengo documentado el diagrama de arquitectura del sistema',
+    'Comunico problemas técnicos en lenguaje no técnico a la dirección de la clínica',
+    'Tengo identificada y documentada la deuda técnica del proyecto',
+    'Escribo reportes de progreso semanales para la dirección de la clínica',
+  ]},
+];
+
+const COMMANDS = {
+  artisan:{label:'⚡ Artisan',color:'#B83232',cmds:[
+    {c:'php artisan serve',d:'Levantar servidor de desarrollo local en localhost:8000'},
+    {c:'php artisan route:list',d:'Listar TODAS las rutas del sistema con método, URI y middleware'},
+    {c:'php artisan route:cache',d:'Cachear rutas para producción — mayor velocidad de respuesta'},
+    {c:'php artisan config:cache',d:'Cachear toda la configuración para producción'},
+    {c:'php artisan config:clear',d:'Limpiar caché de configuración (necesario al cambiar .env)'},
+    {c:'php artisan cache:clear',d:'Limpiar caché de la aplicación (Redis, file, etc.)'},
+    {c:'php artisan optimize',d:'Optimizar todo para producción (cachea config, rutas y vistas)'},
+    {c:'php artisan optimize:clear',d:'Limpiar todo el caché de optimización'},
+    {c:'php artisan migrate',d:'Ejecutar migraciones pendientes'},
+    {c:'php artisan migrate:status',d:'Ver estado de todas las migraciones del proyecto'},
+    {c:'php artisan migrate:rollback',d:'Revertir la última tanda de migraciones ejecutadas'},
+    {c:'php artisan migrate:fresh --seed',d:'⚠️ SOLO LOCAL: borra BD, recrea tablas y siembra datos de prueba'},
+    {c:'php artisan make:model Nombre -mc',d:'Crear Modelo + Migración + Controlador en un solo comando'},
+    {c:'php artisan make:controller NombreController --api',d:'Crear controlador de API con métodos CRUD'},
+    {c:'php artisan make:migration add_campo_to_tabla_table',d:'Crear nueva migración con nombre descriptivo'},
+    {c:'php artisan make:middleware NombreMiddleware',d:'Crear middleware personalizado'},
+    {c:'php artisan make:request NombreFormRequest',d:'Crear Form Request para validación de inputs'},
+    {c:'php artisan make:job NombreJob',d:'Crear Job para procesamiento en cola'},
+    {c:'php artisan make:resource NombreResource',d:'Crear API Resource para transformar modelos a JSON'},
+    {c:'php artisan tinker',d:'Consola interactiva PHP — ideal para probar consultas Eloquent'},
+    {c:'php artisan queue:work',d:'Procesar colas de trabajo manualmente'},
+    {c:'php artisan queue:restart',d:'Reiniciar workers de cola — SIEMPRE hacerlo después de deploy'},
+    {c:'php artisan test',d:'Correr todos los tests del proyecto'},
+    {c:'php artisan key:generate',d:'Generar clave de aplicación (APP_KEY en .env)'},
+  ]},
+  git:{label:'🔀 Git',color:'#C55A11',cmds:[
+    {c:'git clone [url-del-repositorio]',d:'Clonar el repositorio en tu máquina local'},
+    {c:'git status',d:'Ver archivos modificados, sin trackear y en staging area'},
+    {c:'git add .',d:'Agregar todos los cambios al staging area'},
+    {c:"git commit -m 'fix: descripcion clara'",d:'Commit con mensaje en formato Conventional Commits'},
+    {c:'git push origin nombre-de-rama',d:'Subir cambios al repositorio remoto en GitHub'},
+    {c:'git pull origin main',d:'Traer últimos cambios del remoto (hazlo siempre al inicio del día)'},
+    {c:'git checkout -b feature/nombre-de-la-feature',d:'Crear y cambiar a nueva rama de trabajo'},
+    {c:'git merge nombre-de-rama',d:'Fusionar una rama en la rama actual'},
+    {c:'git log --oneline --graph --all',d:'Ver historial del repositorio de forma visual y compacta'},
+    {c:'git diff HEAD',d:'Ver todos los cambios pendientes de commit'},
+    {c:'git stash',d:'Guardar cambios temporalmente sin hacer commit'},
+    {c:'git stash pop',d:'Recuperar los cambios guardados con stash'},
+    {c:'git blame ruta/archivo.php',d:'Ver quién escribió cada línea y en qué commit'},
+    {c:'git revert [hash-del-commit]',d:'Revertir commit creando uno nuevo (seguro en ramas compartidas)'},
+    {c:'git reset --hard HEAD',d:'⚠️ PELIGROSO: descarta TODOS los cambios no commiteados'},
+    {c:'git cherry-pick [hash]',d:'Aplicar un commit específico a la rama actual'},
+  ]},
+  sql:{label:'🗄️ SQL',color:'#1A7A4A',cmds:[
+    {c:'SELECT * FROM patients WHERE active = 1 LIMIT 10;',d:'Seleccionar pacientes activos con límite de resultados'},
+    {c:'SELECT p.name, COUNT(a.id) AS citas\nFROM patients p\nLEFT JOIN appointments a ON p.id = a.patient_id\nGROUP BY p.id ORDER BY citas DESC;',d:'Pacientes con total de citas, ordenados de mayor a menor'},
+    {c:'EXPLAIN SELECT * FROM appointments WHERE patient_id = 1;',d:'Analizar plan de ejecución de una query (detectar problemas de rendimiento)'},
+    {c:'CREATE INDEX idx_patient_id ON appointments(patient_id);',d:'Crear índice en columna usada frecuentemente en WHERE o JOIN'},
+    {c:'SHOW INDEX FROM appointments;',d:'Ver todos los índices existentes en una tabla'},
+    {c:'DESCRIBE patients;',d:'Ver columnas, tipos de datos y restricciones de una tabla'},
+    {c:'START TRANSACTION;\nUPDATE patients SET status = "active" WHERE id = 5;\nCOMMIT;',d:'Ejecutar cambios dentro de una transacción atómica (todo o nada)'},
+    {c:'ROLLBACK;',d:'Deshacer una transacción completa en caso de error'},
+    {c:"mysqldump -u root -p db_name > backup_$(date +%Y%m%d).sql",d:'Backup completo de la base de datos con fecha en el nombre del archivo'},
+    {c:'mysql -u root -p db_name < backup.sql',d:'Restaurar base de datos completa desde un archivo de backup'},
+  ]},
+  linux:{label:'🖥️ Linux',color:'#3D4D5C',cmds:[
+    {c:'ssh usuario@ip_del_servidor',d:'Conectarse al servidor de producción por SSH'},
+    {c:'tail -f storage/logs/laravel.log',d:'Ver logs de Laravel en tiempo real (Ctrl+C para salir)'},
+    {c:'tail -f /var/log/nginx/error.log',d:'Ver logs de errores de Nginx en tiempo real'},
+    {c:"grep 'Error\\|Exception' storage/logs/laravel.log | tail -30",d:'Buscar errores recientes en los logs de Laravel'},
+    {c:'systemctl restart nginx',d:'Reiniciar el servidor web Nginx'},
+    {c:'systemctl restart php8.2-fpm',d:'Reiniciar PHP-FPM (proceso PHP del servidor)'},
+    {c:'systemctl status nginx',d:'Ver el estado actual del servicio Nginx'},
+    {c:'chown -R www-data:www-data storage bootstrap/cache',d:'Dar permisos de propietario correctos a carpetas de Laravel'},
+    {c:'chmod -R 775 storage bootstrap/cache',d:'Dar permisos de escritura correctos a carpetas de Laravel'},
+    {c:'df -h',d:'Ver el espacio en disco disponible en el servidor'},
+    {c:'free -m',d:'Ver la memoria RAM disponible en megabytes'},
+    {c:'top',d:'Monitor de procesos del sistema en tiempo real (q para salir)'},
+    {c:"find . -name '*.php' | xargs grep 'dd('",d:'Buscar debug statements dd() olvidados en el código fuente'},
+    {c:'composer install --no-dev --optimize-autoloader',d:'Instalar dependencias PHP optimizadas para producción'},
+  ]},
+  debug:{label:'🐛 Debug',color:'#0D7C76',cmds:[
+    {c:'dd($variable);',d:'Dump and die: muestra el valor de la variable y detiene la ejecución — el más usado'},
+    {c:'dump($var1, $var2);',d:'Muestra variables sin detener la ejecución del código'},
+    {c:"Log::info('Mensaje', ['clave' => $valor]);",d:'Escribir en el log para rastrear flujo sin detener la ejecución'},
+    {c:"Log::error('Error', ['ex' => $e->getMessage()]);",d:'Registrar error con contexto completo en los logs del sistema'},
+    {c:"DB::enableQueryLog();\n// código a analizar...\ndd(DB::getQueryLog());",d:'Ver todas las queries SQL ejecutadas en un bloque de código'},
+    {c:"Patient::with('appointments', 'nutritionist')->get();",d:'Eager loading: cargar relaciones en 2 queries en lugar de N+1'},
+    {c:'php artisan tinker',d:'Abrir consola interactiva PHP para probar código y consultas'},
+    {c:'composer require barryvdh/laravel-debugbar --dev',d:'Instalar Laravel Debugbar (solo en entorno de desarrollo)'},
+    {c:'php artisan telescope:install && php artisan migrate',d:'Instalar Laravel Telescope — panel de observabilidad completo'},
+  ]},
+};
+
+const RESOURCES = {
+  yt:[
+    {n:'Laracasts',d:'El mejor canal de Laravel y PHP. Series completas y código real de proyectos.',url:'https://www.youtube.com/@Laracasts'},
+    {n:'Laravel Daily (Povilas Korop)',d:'Tips diarios de Laravel, refactorización y casos de código real. Nivel intermedio.',url:'https://www.youtube.com/@LaravelDaily'},
+    {n:'Traversy Media',d:'Crash courses de Laravel, PHP OOP y MySQL. Perfectos para comenzar desde cero.',url:'https://www.youtube.com/@TraversyMedia'},
+    {n:'Codersfree',d:'Laravel completo en español. Muy didáctico para desarrolladores hispanohablantes.',url:'https://www.youtube.com/@codersfree'},
+    {n:'Fireship',d:'Conceptos técnicos explicados en 100 segundos. Ideal para repasos rápidos.',url:'https://www.youtube.com/@Fireship'},
+    {n:'The Net Ninja',d:'PHP y desarrollo web en general. Buenas series para fundamentos sólidos.',url:'https://www.youtube.com/@NetNinja'},
+  ],
+  free:[
+    {n:'laravel.com/docs',d:'Documentación oficial de Laravel. La mejor documentación de cualquier framework del mundo.',url:'https://laravel.com/docs',tag:'Laravel'},
+    {n:'phptherightway.com',d:'Guía de buenas prácticas PHP. Lectura obligatoria. Completamente gratuita.',url:'https://phptherightway.com',tag:'PHP'},
+    {n:'SQLZoo.net',d:'Ejercicios interactivos de SQL completamente gratuitos. Ideal para practicar JOINs.',url:'https://sqlzoo.net',tag:'SQL'},
+    {n:'git-scm.com/book',d:'Pro Git Book completo y gratuito en línea. El recurso definitivo sobre Git.',url:'https://git-scm.com/book',tag:'Git'},
+    {n:'owasp.org/Top10',d:'OWASP Top 10: las 10 vulnerabilidades más críticas en aplicaciones web.',url:'https://owasp.org/www-project-top-ten',tag:'Seguridad'},
+    {n:'roadmap.sh/backend',d:'Hoja de ruta visual completa del desarrollador backend. Completamente gratuita.',url:'https://roadmap.sh/backend',tag:'Carrera'},
+    {n:'spatie.be/docs/laravel-permission',d:'Documentación de Spatie Permission: el paquete de roles y permisos más usado en Laravel.',url:'https://spatie.be/docs/laravel-permission',tag:'Laravel'},
+  ],
+  paid:[
+    {n:'Laracasts Pro',price:'$9/mes',d:'El mejor recurso de Laravel del mundo. Series completas, screencasts y foros activos.'},
+    {n:'Platzi: Ruta PHP/Laravel',price:'$25/mes',d:'En español, excelente calidad didáctica. Certificados incluidos en todos los cursos.'},
+    {n:'Udemy: Laravel (Schwarzmüller)',price:'~$15',d:'Curso completo en inglés. Espera los descuentos frecuentes de Udemy para comprarlo.'},
+  ],
+  books:[
+    {n:'Laravel: Up & Running',a:'Matt Stauffer',d:'El libro más completo sobre Laravel. Editorial O\'Reilly. Léelo en 6 meses como mínimo.'},
+    {n:'Working Effectively with Legacy Code',a:'Michael Feathers',d:'ESENCIAL para quien hereda sistemas. Técnicas para trabajar con código sin tests.'},
+    {n:'The Pragmatic Programmer',a:'Hunt & Thomas',d:'Mentalidad de desarrollador profesional. Uno de los mejores libros de tecnología jamás escrito.'},
+    {n:'Clean Code',a:'Robert C. Martin',d:'Cómo escribir código legible y mantenible. Lectura de nivel intermedio.'},
+    {n:'PHP 8 Objects, Patterns, Practice',a:'Matt Zandstra',d:'OOP y patrones de diseño en PHP. Nivel intermedio-avanzado.'},
+  ],
+};
+
+const KPIS = [
+  {icon:'🐛',l:'Bugs corregidos en producción',m:'≥ 10'},
+  {icon:'⚡',l:'Funcionalidades nuevas implementadas y desplegadas',m:'≥ 3'},
+  {icon:'📦',l:'Commits en el repositorio del proyecto',m:'≥ 100'},
+  {icon:'🧪',l:'Tests escritos (PHPUnit o Pest)',m:'≥ 10'},
+  {icon:'📝',l:'Páginas de documentación técnica creadas',m:'≥ 20'},
+  {icon:'🚀',l:'Despliegues realizados de forma independiente',m:'≥ 5'},
+  {icon:'⏱️',l:'Tiempo para diagnosticar un bug nuevo',m:'< 1 hora'},
+  {icon:'🧠',l:'Porcentaje del código del CRM que entiendes',m:'> 70%'},
+];
+
+// ── RENDER HELPERS ───────────────────────────────────────────────────────────
+function pct(v){ return Math.min(100,Math.max(0,Math.round(v))); }
+function el(tag,attrs,html){
+  const e = document.createElement(tag);
+  if(attrs) Object.entries(attrs).forEach(([k,v])=>{ if(k==='class') e.className=v; else if(k==='style') e.style.cssText=v; else e.setAttribute(k,v); });
+  if(html!==undefined) e.innerHTML=html;
+  return e;
+}
+
+// ── UPDATE GLOBAL UI ─────────────────────────────────────────────────────────
+function updateGlobal(){
+  const days = Object.values(ST.days).filter(Boolean).length;
+  const checks = Object.values(ST.checks).filter(Boolean).length;
+  const p = pct((days/49)*100);
+  document.getElementById('xp-pct').textContent = p+'%';
+  document.getElementById('xp-fill').style.width = p+'%';
+  document.getElementById('tb-days').textContent = days+'/49 días';
+  document.getElementById('tb-checks').textContent = checks+' competencias';
+  document.getElementById('sb-day').textContent = 'Día actual: '+Math.min(49,days+1);
+  document.getElementById('sb-checks').textContent = checks+' competencias dominadas';
+  const phase = days<28?'Fase 1 activa':days<49?'Fase 2 activa':'¡Fase 2 completada! ✓';
+  document.getElementById('sb-phase').textContent = phase;
+}
+
+// ── DASHBOARD ────────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const days = Object.values(ST.days).filter(Boolean).length;
+  const tasks = Object.values(ST.tasks).filter(Boolean).length;
+  const checks = Object.values(ST.checks).filter(Boolean).length;
+  const scores = Object.values(ST.exams);
+  const best = scores.length ? Math.max(...scores) : null;
+  const totalTasks = WEEKS.reduce((a,w)=>a+w.days.reduce((b,d)=>b+(d.tasks?.length||0),0),0);
+  const totalChecks = CHECKLIST.reduce((a,c)=>a+c.items.length,0);
+
+  // Stats
+  const sg = document.getElementById('stats-grid');
+  sg.innerHTML = '';
+  [{n:days,l:'Días ✓',s:'de 49'},{n:tasks,l:'Tareas ✓',s:'de '+totalTasks},
+   {n:best!==null?best+'%':'—',l:'Mejor examen',s:'en 5 áreas'},{n:checks,l:'Competencias',s:'de '+totalChecks}]
+  .forEach(x=>{
+    sg.innerHTML += `<div class="stat-card"><div class="stat-n">${x.n}</div><div class="stat-l">${x.l}</div><div class="stat-s">${x.s}</div></div>`;
+  });
+
+  // Days progress bar
+  const dp = pct((days/49)*100);
+  document.getElementById('days-pct').textContent = dp+'%';
+  document.getElementById('days-fill').style.width = dp+'%';
+
+  // Days grid
+  const grid = document.getElementById('days-grid');
+  grid.innerHTML = '';
+  const nextDay = Math.min(49, days+1);
+  for(let d=1;d<=49;d++){
+    const done = ST.days[d], isNext = d===nextDay && !done;
+    const dc = el('div',{class:'dc'+(done?' done':isNext?' next':''),'data-d':d});
+    dc.innerHTML = `<div class="dn">D${d}</div><div class="dd"></div>`;
+    dc.onclick = ()=>{ ST.days[d]=!ST.days[d]; save(); updateGlobal(); renderDashboard(); };
+    grid.appendChild(dc);
+  }
+
+  // Area bars
+  const areas = [
+    {l:'PHP / Laravel',v:pct(days*4+checks*2),c:'#4C3D9E'},
+    {l:'SQL / Base de datos',v:pct(days*3+tasks),c:'#1A7A4A'},
+    {l:'Git / Servidores',v:pct(days*3+tasks*2),c:'#C55A11'},
+    {l:'Seguridad / APIs',v:pct(days*2+checks*3),c:'#B83232'},
+  ];
+  document.getElementById('area-bars').innerHTML = areas.map(a=>`
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px">
+      <span style="color:#5A6878">${a.l}</span><span style="font-weight:700;color:${a.c}">${a.v}%</span>
+    </div>
+    <div class="pbar"><div class="pfill" style="width:${a.v}%;background:${a.c}"></div></div>`).join('');
+
+  // Next day tasks
+  const nw = Math.min(WEEKS.length-1, Math.floor(days/7));
+  const nd = Math.min(6, days%7);
+  const nextDayData = WEEKS[nw]?.days?.[nd];
+  document.getElementById('next-day-title').textContent = nextDayData ? `Día ${nextDay} — tareas pendientes` : '¡Plan completado! 🎉';
+  const ntEl = document.getElementById('next-day-tasks');
+  if(nextDayData){
+    ntEl.innerHTML = `<div style="font-size:12px;font-weight:600;color:#4C3D9E;margin-bottom:8px">${nextDayData.title}</div>`;
+    (nextDayData.tasks||[]).forEach((t,i)=>{
+      const k=`${nw}-${nd}-${i}`, on=!!ST.tasks[k];
+      const item = el('div',{class:'task-item','data-k':k});
+      item.innerHTML = `<div class="chk${on?' on':''}">${on?'✓':''}</div><span class="task-txt${on?' done-txt':''}">${t}</span>`;
+      item.onclick = ()=>{ ST.tasks[k]=!ST.tasks[k]; save(); updateGlobal(); renderDashboard(); };
+      ntEl.appendChild(item);
+    });
+  } else {
+    ntEl.innerHTML = '<p style="color:#7A8899;font-size:13px">Completaste los 49 días del plan. Ahora continúa con el checklist de competencias.</p>';
+  }
+}
+
+// ── STUDY ────────────────────────────────────────────────────────────────────
+let activeWeek = 0;
+function renderStudy(){
+  // Tabs
+  const tabsEl = document.getElementById('week-tabs');
+  tabsEl.innerHTML = '';
+  WEEKS.forEach((w,i)=>{
+    const done = w.days.filter(d=>ST.days[d.d]).length;
+    const btn = el('button',{class:'tab-btn'+(i===activeWeek?' active':'')});
+    btn.textContent = `Sem ${w.id} ${done===7?'✓':'('+done+'/7)'}`;
+    btn.style.background = i===activeWeek ? w.color : '';
+    btn.onclick = ()=>{ activeWeek=i; renderStudy(); };
+    tabsEl.appendChild(btn);
+  });
+  // Content
+  const w = WEEKS[activeWeek];
+  const cont = document.getElementById('week-content');
+  cont.innerHTML = '';
+  // Week header
+  const wh = el('div',{class:'week-header',style:`background:${w.color}15;border-left:4px solid ${w.color}`});
+  wh.innerHTML = `<div class="week-phase" style="color:${w.color}">${w.label}</div>
+    <div class="week-title" style="color:${w.color}">Semana ${w.id}: ${w.title}</div>
+    <div class="week-goal" style="color:${w.color}">${w.goal}</div>`;
+  cont.appendChild(wh);
+  // Day cards
+  w.days.forEach((day,di)=>{
+    const isDone = !!ST.days[day.d];
+    const dc = el('div',{class:'day-card'+(isDone?' done-card':''),style:`border-left-color:${isDone?'#1A7A4A':w.color}`});
+    const tags = day.tags.map(t=>{const s=TAG_STYLE[t]||{bg:'#f0f0f0',c:'#333'}; return `<span class="tag" style="background:${s.bg};color:${s.c}">${t}</span>`;}).join('');
+    dc.innerHTML = `
+      <div class="day-head">
+        <div>
+          <div class="day-num">DÍA ${day.d}</div>
+          <div class="day-tags">${tags}</div>
+          <div class="day-title">${day.title}</div>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:11px;color:#7A8899;white-space:nowrap;margin-left:10px;flex-shrink:0">
+          <input type="checkbox" ${isDone?'checked':''} data-day="${day.d}" style="cursor:pointer"> completado
+        </label>
+      </div>
+      <div class="day-2col">
+        <div><div class="section-label">📚 Estudio</div><div class="section-text">${day.study}</div></div>
+        <div><div class="section-label">💻 Práctica</div><div class="section-text">${day.practice}</div></div>
+      </div>
+      <div class="section-label" style="margin-bottom:6px">✅ Tareas del día</div>
+      <ul class="task-list" id="tasks-${activeWeek}-${di}"></ul>`;
+    cont.appendChild(dc);
+
+    // Tasks
+    const tlist = document.getElementById(`tasks-${activeWeek}-${di}`);
+    (day.tasks||[]).forEach((t,ti)=>{
+      const k=`${activeWeek}-${di}-${ti}`, on=!!ST.tasks[k];
+      const li = el('li',{class:'task-item','data-k':k});
+      li.innerHTML = `<div class="chk${on?' on':''}">${on?'✓':''}</div><span class="task-txt${on?' done-txt':''}">${t}</span>`;
+      li.onclick = ()=>{ ST.tasks[k]=!ST.tasks[k]; save(); updateGlobal(); li.querySelector('.chk').className='chk'+(ST.tasks[k]?' on':''); li.querySelector('.chk').textContent=ST.tasks[k]?'✓':''; li.querySelector('.task-txt').className='task-txt'+(ST.tasks[k]?' done-txt':''); };
+      tlist.appendChild(li);
+    });
+
+    // Day checkbox
+    dc.querySelector('input[type=checkbox]').onchange = e => {
+      ST.days[day.d] = e.target.checked; save(); updateGlobal(); renderStudy();
+    };
+  });
+}
+
+// ── COMMANDS ─────────────────────────────────────────────────────────────────
+let activeCmd = 'artisan';
+function renderCommands(cat){
+  activeCmd = cat||activeCmd;
+  // Tabs
+  const tabsEl = document.getElementById('cmd-tabs');
+  tabsEl.innerHTML = '';
+  Object.entries(COMMANDS).forEach(([k,v])=>{
+    const btn = el('button',{class:'tab-btn'+(activeCmd===k?' active':'')});
+    btn.textContent = v.label;
+    btn.style.background = activeCmd===k ? v.color : '';
+    btn.onclick = ()=>renderCommands(k);
+    tabsEl.appendChild(btn);
+  });
+  // Commands
+  const cont = document.getElementById('cmd-content');
+  cont.innerHTML = '';
+  COMMANDS[activeCmd].cmds.forEach((x,i)=>{
+    const card = el('div',{class:'cmd-card'});
+    const pre = el('pre',{class:'cmd'});
+    pre.textContent = x.c;
+    const copyBtn = el('button',{class:'copy-btn'});
+    copyBtn.textContent = 'copiar';
+    copyBtn.onclick = ()=>{ navigator.clipboard?.writeText(x.c).catch(()=>{}); copyBtn.textContent='✓ ok'; copyBtn.classList.add('copied'); setTimeout(()=>{copyBtn.textContent='copiar';copyBtn.classList.remove('copied');},1500); };
+    pre.appendChild(copyBtn);
+    card.appendChild(pre);
+    card.appendChild(el('div',{class:'cmd-desc'},x.d));
+    cont.appendChild(card);
+  });
+}
+
+// ── RESOURCES ────────────────────────────────────────────────────────────────
+function renderResources(){
+  // YouTube
+  document.getElementById('res-yt').innerHTML = RESOURCES.yt.map(r=>`
+    <div class="res-row">
+      <span style="font-size:20px;width:28px;text-align:center;color:#FF0000">▶</span>
+      <div class="res-info"><strong>${r.n}</strong><span>${r.d}</span></div>
+      <a href="${r.url}" target="_blank" class="res-link" style="color:#4C3D9E;border-color:#4C3D9E">Abrir ↗</a>
+    </div>`).join('');
+  // Free
+  document.getElementById('res-free').innerHTML = RESOURCES.free.map(r=>`
+    <div class="res-row">
+      <span class="res-tag">${r.tag}</span>
+      <div class="res-info"><strong>${r.n}</strong><span>${r.d}</span></div>
+      <a href="${r.url}" target="_blank" class="res-link" style="color:#0D7C76;border-color:#0D7C76">Abrir ↗</a>
+    </div>`).join('');
+  // Paid
+  document.getElementById('res-paid').innerHTML = RESOURCES.paid.map(r=>`
+    <div style="padding:8px 0;border-bottom:1px solid #F0F3F7">
+      <div style="display:flex;justify-content:space-between"><strong style="font-size:13px">${r.n}</strong><span style="font-size:11px;font-weight:700;color:#1A7A4A">${r.price}</span></div>
+      <div style="font-size:11px;color:#7A8899;margin-top:2px">${r.d}</div>
+    </div>`).join('');
+  // Books
+  document.getElementById('res-books').innerHTML = RESOURCES.books.map(r=>`
+    <div style="padding:8px 0;border-bottom:1px solid #F0F3F7">
+      <div style="font-size:13px;font-weight:700">${r.n}</div>
+      <div style="font-size:11px;color:#C55A11;margin-top:1px">${r.a}</div>
+      <div style="font-size:11px;color:#7A8899;margin-top:2px">${r.d}</div>
+    </div>`).join('');
+}
+
+// ── EXAM ─────────────────────────────────────────────────────────────────────
+let examState = {topic:'php', answers:{}, submitted:false};
+function renderExam(){
+  // Tabs
+  const tabsEl = document.getElementById('exam-tabs');
+  tabsEl.innerHTML = '';
+  Object.entries(EXAMS).forEach(([k,v])=>{
+    const prev = ST.exams[k];
+    const btn = el('button',{class:'tab-btn'+(examState.topic===k?' active':'')});
+    btn.textContent = v.title + (prev!==undefined ? ' ('+prev+'%)' : '');
+    btn.style.background = examState.topic===k ? v.color : '';
+    btn.onclick = ()=>{ examState={topic:k,answers:{},submitted:false}; renderExam(); };
+    tabsEl.appendChild(btn);
+  });
+  // Content
+  const cont = document.getElementById('exam-content');
+  cont.innerHTML = '';
+  const ex = EXAMS[examState.topic];
+
+  // Header card
+  const hdr = el('div',{class:'card',style:`border-left:4px solid ${ex.color};margin-bottom:14px`});
+  const prevScore = ST.exams[examState.topic];
+  hdr.innerHTML = `<h3 style="color:#1B2A3B">Examen: ${ex.title}</h3>
+    <p style="font-size:12px;color:#7A8899;margin-top:3px">5 preguntas · Lee con cuidado antes de enviar</p>
+    ${prevScore!==undefined?`<div style="margin-top:8px;font-size:12px;font-weight:700;color:${ex.color}">Tu última puntuación: ${prevScore}%</div>`:''}`;
+  cont.appendChild(hdr);
+
+  // Questions
+  ex.qs.forEach((q,qi)=>{
+    const qcard = el('div',{class:'q-card'});
+    qcard.innerHTML = `<div class="q-text"><span class="q-num" style="color:${ex.color}">${qi+1}.</span>${q.q}</div>`;
+    q.opts.forEach((opt,oi)=>{
+      const ans = examState.answers[qi];
+      let cls = 'opt';
+      if(!examState.submitted && ans===oi) cls += ' sel';
+      if(examState.submitted && oi===q.c) cls += ' ok';
+      if(examState.submitted && ans===oi && oi!==q.c) cls += ' bad';
+      if(examState.submitted) cls += ' disabled';
+      const optEl = el('div',{class:cls});
+      const letter = String.fromCharCode(65+oi);
+      optEl.innerHTML = `<span class="opt-letter">${letter}</span>${opt}`;
+      if(examState.submitted){
+        if(oi===q.c) optEl.innerHTML += ' <span style="margin-left:auto">✓</span>';
+        else if(ans===oi) optEl.innerHTML += ' <span style="margin-left:auto">✗</span>';
+      }
+      if(!examState.submitted){
+        optEl.onclick = ()=>{
+          examState.answers[qi]=oi;
+          qcard.querySelectorAll('.opt').forEach((o,i)=>{ o.className='opt'+(i===oi?' sel':''); });
+        };
+      }
+      qcard.appendChild(optEl);
+    });
+    if(examState.submitted){
+      const expEl = el('div',{class:'explanation'});
+      expEl.innerHTML = `<strong>💡 Explicación:</strong> ${q.exp}`;
+      qcard.appendChild(expEl);
+    }
+    cont.appendChild(qcard);
+  });
+
+  // Buttons / Result
+  if(!examState.submitted){
+    const btnRow = el('div',{class:'btn-row'});
+    const submitBtn = el('button',{class:'btn primary',style:`background:${ex.color}`});
+    submitBtn.innerHTML = `📤 Enviar respuestas (${Object.keys(examState.answers).length}/5)`;
+    submitBtn.onclick = ()=>{
+      examState.submitted = true;
+      const correct = ex.qs.filter((q,i)=>examState.answers[i]===q.c).length;
+      const score = Math.round((correct/ex.qs.length)*100);
+      ST.exams[examState.topic] = score; save();
+      updateGlobal(); renderExam();
+    };
+    const resetBtn = el('button',{class:'btn'});
+    resetBtn.innerHTML = '🔄 Reiniciar';
+    resetBtn.onclick = ()=>{ examState={topic:examState.topic,answers:{},submitted:false}; renderExam(); };
+    btnRow.appendChild(submitBtn); btnRow.appendChild(resetBtn);
+    cont.appendChild(btnRow);
+  } else {
+    const correct = ex.qs.filter((q,i)=>examState.answers[i]===q.c).length;
+    const score = ST.exams[examState.topic];
+    const bg = score>=80?'#E4F6EE':score>=60?'#FEF3E2':'#FDECEA';
+    const col = score>=80?'#1A7A4A':score>=60?'#C55A11':'#B83232';
+    const msg = score>=80?'¡Excelente! Dominas este tema.':score>=60?'Bien. Repasa lo que fallaste.':'Necesitas repasar este tema antes de continuar.';
+    const res = el('div',{class:'exam-result',style:`background:${bg};border:1px solid ${col}`});
+    res.innerHTML = `<div class="score-big" style="color:${col}">${score}%</div>
+      <div class="score-sub" style="color:${col}">${correct}/${ex.qs.length} correctas — ${msg}</div>`;
+    const retryBtn = el('button',{class:'btn primary',style:`background:${col};margin-top:12px`});
+    retryBtn.innerHTML = '🔄 Intentar de nuevo';
+    retryBtn.onclick = ()=>{ examState={topic:examState.topic,answers:{},submitted:false}; renderExam(); };
+    res.appendChild(retryBtn);
+    cont.appendChild(res);
+  }
+}
+
+// ── CHECKLIST ────────────────────────────────────────────────────────────────
+function renderChecklist(){
+  const total = CHECKLIST.reduce((a,c)=>a+c.items.length,0);
+  const done = Object.values(ST.checks).filter(Boolean).length;
+  const p = pct((done/total)*100);
+  document.getElementById('ck-pct').textContent = p+'%';
+  document.getElementById('ck-fill').style.width = p+'%';
+  document.getElementById('ck-sub').textContent = done+' de '+total+' competencias dominadas';
+
+  const cont = document.getElementById('checklist-content');
+  cont.innerHTML = '';
+  CHECKLIST.forEach((cat,ci)=>{
+    const catDone = cat.items.filter((_,i)=>ST.checks[`${ci}-${i}`]).length;
+    const catEl = el('div',{class:'card ck-cat',style:`border-left-color:${cat.color}`});
+    catEl.innerHTML = `<div class="ck-cat-head">
+      <h4><span>${cat.icon}</span>${cat.cat}</h4>
+      <div class="ck-cat-info">
+        <span>${catDone}/${cat.items.length}</span>
+        <div style="width:60px"><div class="pbar sm"><div class="pfill" style="width:${pct((catDone/cat.items.length)*100)}%;background:${cat.color}"></div></div></div>
+      </div>
+    </div>
+    <ul class="task-list" id="ck-list-${ci}"></ul>`;
+    cont.appendChild(catEl);
+
+    const list = document.getElementById(`ck-list-${ci}`);
+    cat.items.forEach((item,i)=>{
+      const k=`${ci}-${i}`, on=!!ST.checks[k];
+      const li = el('li',{class:'task-item','data-k':k});
+      li.innerHTML = `<div class="chk${on?' on':''}">${on?'✓':''}</div><span class="task-txt${on?' done-txt':''}">${item}</span>`;
+      li.onclick = ()=>{
+        ST.checks[k]=!ST.checks[k]; save(); updateGlobal();
+        li.querySelector('.chk').className='chk'+(ST.checks[k]?' on':'');
+        li.querySelector('.chk').textContent=ST.checks[k]?'✓':'';
+        li.querySelector('.task-txt').className='task-txt'+(ST.checks[k]?' done-txt':'');
+        const newDone = Object.values(ST.checks).filter(Boolean).length;
+        const np = pct((newDone/total)*100);
+        document.getElementById('ck-pct').textContent = np+'%';
+        document.getElementById('ck-fill').style.width = np+'%';
+        document.getElementById('ck-sub').textContent = newDone+' de '+total+' competencias dominadas';
+      };
+      list.appendChild(li);
+    });
+  });
+}
+
+// ── PROGRESS ─────────────────────────────────────────────────────────────────
+function renderProgress(){
+  document.getElementById('kpi-list').innerHTML = KPIS.map(k=>`
+    <div class="kpi-row">
+      <span class="kpi-icon">${k.icon}</span>
+      <span class="kpi-label">${k.l}</span>
+      <span class="kpi-meta">${k.m}</span>
+    </div>`).join('');
+}
+
+// ── NAVIGATION ───────────────────────────────────────────────────────────────
+const PAGE_TITLES = {
+  dashboard:'📊 Dashboard',study:'📚 Plan de estudio',commands:'💻 Comandos',
+  resources:'🔗 Recursos',exam:'📝 Exámenes',checklist:'✅ Checklist',progress:'📈 Objetivos'
+};
+
+function navTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pageEl = document.getElementById('page-'+page);
+  if(pageEl) pageEl.classList.add('active');
+  const navEl = document.querySelector(`[data-page="${page}"]`);
+  if(navEl) navEl.classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_TITLES[page]||page;
+
+  if(page==='study') renderStudy();
+  else if(page==='commands') renderCommands();
+  else if(page==='resources') renderResources();
+  else if(page==='exam') renderExam();
+  else if(page==='checklist') renderChecklist();
+  else if(page==='progress') renderProgress();
+  else if(page==='dashboard') renderDashboard();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-item').forEach(n=>{
+  n.onclick = ()=>navTo(n.dataset.page);
+});
+
+updateGlobal();
+renderDashboard();
+</script>
+</body>
+</html>
