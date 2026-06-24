@@ -4,6 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Salvus Academy</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* ── AUTH SCREEN ─────────────────────────────────────────────────────────── */
+#auth-screen{position:fixed;inset:0;background:#F2F5F8;display:flex;align-items:center;justify-content:center;z-index:9999}
+#auth-screen.hidden{display:none}
+.auth-box{background:#fff;border:1px solid #E5EBF2;border-radius:16px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 4px 24px rgba(0,0,0,.07)}
+.auth-logo{text-align:center;margin-bottom:24px}
+.auth-logo h1{font-size:20px;font-weight:800;color:#1B2A3B}
+.auth-logo p{font-size:12px;color:#7A8899;margin-top:4px}
+.auth-tabs{display:flex;border-radius:8px;overflow:hidden;border:1px solid #E5EBF2;margin-bottom:24px}
+.auth-tab{flex:1;padding:8px;text-align:center;font-size:13px;font-weight:600;cursor:pointer;background:#F8FAFD;color:#7A8899;transition:all .15s;border:none;font-family:inherit}
+.auth-tab.active{background:#1B2A3B;color:#fff}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:11px;font-weight:700;color:#5A6878;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.auth-field input{width:100%;padding:9px 12px;border:1.5px solid #D4DCE4;border-radius:8px;font-size:13px;font-family:inherit;color:#1B2A3B;background:#fff;transition:border-color .15s;outline:none}
+.auth-field input:focus{border-color:#1B2A3B}
+.auth-submit{width:100%;padding:10px;background:#1B2A3B;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s;margin-top:4px}
+.auth-submit:hover{background:#243548}
+.auth-submit:disabled{background:#B0BBC8;cursor:not-allowed}
+.auth-msg{font-size:12px;text-align:center;margin-top:10px;padding:8px;border-radius:7px;display:none}
+.auth-msg.error{display:block;background:#FDECEA;color:#B83232;border:1px solid #F5C0C0}
+.auth-msg.success{display:block;background:#E4F6EE;color:#1A7A4A;border:1px solid #9FE1CB}
+.auth-divider{text-align:center;font-size:11px;color:#AAB5C0;margin:14px 0}
+/* ── USER MENU ────────────────────────────────────────────────────────────── */
+.user-pill{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;background:#F0F3F7;cursor:pointer;border:none;font-family:inherit;font-size:12px;font-weight:600;color:#1B2A3B;transition:background .15s}
+.user-pill:hover{background:#E5EBF2}
+.user-avatar{width:22px;height:22px;border-radius:50%;background:#1B2A3B;color:#9FE1CB;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center}
+/* ── SYNC INDICATOR ───────────────────────────────────────────────────────── */
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#1A7A4A;display:inline-block;margin-right:4px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.sync-label{font-size:10px;color:#7A8899;display:flex;align-items:center}
+</style>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F2F5F8;color:#1B2A3B;font-size:14px}
@@ -166,6 +198,56 @@ pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 
 </style>
 </head>
 <body>
+<!-- ── AUTH SCREEN ───────────────────────────────────────────────────────── -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <h1>🎓 Salvus Academy</h1>
+      <p>Tu ruta de formación en PHP · Laravel · SQL · Git</p>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Iniciar sesión</button>
+      <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Registrarse</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <div class="auth-field">
+        <label>Correo electrónico</label>
+        <input type="email" id="login-email" placeholder="tu@correo.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>Contraseña</label>
+        <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="auth-submit" id="login-btn" onclick="doLogin()">Entrar</button>
+      <div class="auth-msg" id="login-msg"></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="form-register" style="display:none">
+      <div class="auth-field">
+        <label>Nombre completo</label>
+        <input type="text" id="reg-name" placeholder="Tu nombre">
+      </div>
+      <div class="auth-field">
+        <label>Correo electrónico</label>
+        <input type="email" id="reg-email" placeholder="tu@correo.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>Contraseña</label>
+        <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+      </div>
+      <div class="auth-field">
+        <label>Confirmar contraseña</label>
+        <input type="password" id="reg-password2" placeholder="Repite la contraseña" autocomplete="new-password">
+      </div>
+      <button class="auth-submit" id="register-btn" onclick="doRegister()">Crear cuenta</button>
+      <div class="auth-msg" id="register-msg"></div>
+    </div>
+  </div>
+</div>
+
 <div class="app">
   <!-- SIDEBAR -->
   <div class="sb">
@@ -200,9 +282,15 @@ pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 
   <div class="main">
     <div class="topbar">
       <h2 id="page-title">📊 Dashboard</h2>
-      <div class="topbar-badges">
+      <div class="topbar-badges" style="align-items:center">
+        <span class="sync-label"><span class="sync-dot" id="sync-dot"></span><span id="sync-txt">sincronizado</span></span>
         <span class="tb-badge bg-green" id="tb-days">0/49 días</span>
         <span class="tb-badge bg-purple" id="tb-checks">0 competencias</span>
+        <button class="user-pill" id="user-pill" onclick="doLogout()" title="Cerrar sesión">
+          <div class="user-avatar" id="user-avatar">?</div>
+          <span id="user-name-label">Usuario</span>
+          <span style="color:#AAB5C0;font-size:11px">· salir</span>
+        </button>
       </div>
     </div>
     <div class="content">
@@ -324,12 +412,157 @@ pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 
 </div>
 
 <script>
+// ── SUPABASE CONFIG ───────────────────────────────────────────────────────────
+// 🔧 REEMPLAZA estos valores con los de tu proyecto Supabase:
+//    Supabase Dashboard → Settings → API → Project URL & anon key
+const SUPABASE_URL  = 'fvwoztbljdizgakmjtrp';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ2d296dGJsamRpemdha21qdHJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDgwNzIsImV4cCI6MjA5Nzg4NDA3Mn0.2J6phIseLgvE1V-CoNbFPErZhfoc6XJatRViuD-ux4M';
+
+const _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let _currentUser = null;
+
 // ── STATE ────────────────────────────────────────────────────────────────────
 const SK = 'salvus_v6';
-function loadSt(){ try{ return JSON.parse(localStorage.getItem(SK)||'{}'); }catch{ return {}; } }
-function saveSt(s){ try{ localStorage.setItem(SK,JSON.stringify(s)); }catch{} }
-let ST = Object.assign({days:{},tasks:{},checks:{},exams:{}}, loadSt());
-function save(){ saveSt(ST); }
+function loadLocalSt(){ try{ return JSON.parse(localStorage.getItem(SK)||'{}'); }catch{ return {}; } }
+function saveLocalSt(s){ try{ localStorage.setItem(SK,JSON.stringify(s)); }catch{} }
+let ST = Object.assign({days:{},tasks:{},checks:{},exams:{}}, loadLocalSt());
+
+let _saveTimer = null;
+function save(){
+  // Guardar siempre en localStorage (offline-first)
+  saveLocalSt(ST);
+  // Sincronizar con Supabase si hay usuario
+  if(_currentUser){
+    clearTimeout(_saveTimer);
+    setSyncState('saving');
+    _saveTimer = setTimeout(()=> syncToSupabase(), 1000);
+  }
+}
+
+function setSyncState(state){
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-txt');
+  if(!dot) return;
+  if(state==='saving'){dot.style.background='#C55A11';txt.textContent='guardando…';}
+  else if(state==='ok'){dot.style.background='#1A7A4A';txt.textContent='sincronizado';}
+  else if(state==='error'){dot.style.background='#B83232';txt.textContent='error de sync';}
+}
+
+async function syncToSupabase(){
+  if(!_currentUser) return;
+  try{
+    const {error} = await _sb.from('salvus_progress').upsert({
+      user_id: _currentUser.id,
+      progress: ST,
+      updated_at: new Date().toISOString()
+    },{onConflict:'user_id'});
+    setSyncState(error?'error':'ok');
+  }catch{ setSyncState('error'); }
+}
+
+async function loadFromSupabase(){
+  if(!_currentUser) return;
+  try{
+    const {data,error} = await _sb.from('salvus_progress')
+      .select('progress').eq('user_id',_currentUser.id).single();
+    if(!error && data?.progress){
+      ST = Object.assign({days:{},tasks:{},checks:{},exams:{}}, data.progress);
+      saveLocalSt(ST);
+      updateGlobal(); renderDashboard();
+    }
+    setSyncState('ok');
+  }catch{ setSyncState('error'); }
+}
+
+// ── AUTH FUNCTIONS ────────────────────────────────────────────────────────────
+function switchAuthTab(tab){
+  document.getElementById('tab-login').className='auth-tab'+(tab==='login'?' active':'');
+  document.getElementById('tab-register').className='auth-tab'+(tab==='register'?' active':'');
+  document.getElementById('form-login').style.display  = tab==='login'?'':'none';
+  document.getElementById('form-register').style.display = tab==='register'?'':'none';
+}
+
+function showAuthMsg(formId, msg, type){
+  const el = document.getElementById(formId+'-msg');
+  el.textContent = msg;
+  el.className = 'auth-msg '+(type||'error');
+}
+
+async function doLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  if(!email||!pass){showAuthMsg('login','Completa todos los campos.');return;}
+  const btn = document.getElementById('login-btn');
+  btn.disabled=true; btn.textContent='Entrando…';
+  const {error} = await _sb.auth.signInWithPassword({email,password:pass});
+  if(error){showAuthMsg('login', error.message==='Invalid login credentials'?'Correo o contraseña incorrectos.':error.message);}
+  btn.disabled=false; btn.textContent='Entrar';
+}
+
+async function doRegister(){
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-password').value;
+  const pass2 = document.getElementById('reg-password2').value;
+  if(!name||!email||!pass){showAuthMsg('register','Completa todos los campos.');return;}
+  if(pass.length<6){showAuthMsg('register','La contraseña debe tener al menos 6 caracteres.');return;}
+  if(pass!==pass2){showAuthMsg('register','Las contraseñas no coinciden.');return;}
+  const btn = document.getElementById('register-btn');
+  btn.disabled=true; btn.textContent='Creando cuenta…';
+  const {error} = await _sb.auth.signUp({
+    email, password:pass,
+    options:{data:{full_name:name}}
+  });
+  if(error){
+    showAuthMsg('register', error.message);
+  } else {
+    showAuthMsg('register','✅ Cuenta creada. Revisa tu correo para confirmar (o entra directamente si la confirmación está desactivada).','success');
+  }
+  btn.disabled=false; btn.textContent='Crear cuenta';
+}
+
+async function doLogout(){
+  if(!confirm('¿Cerrar sesión?')) return;
+  await _sb.auth.signOut();
+}
+
+function onUserLoggedIn(user){
+  _currentUser = user;
+  document.getElementById('auth-screen').classList.add('hidden');
+  // Avatar inicial
+  const meta = user.user_metadata;
+  const name = meta?.full_name || user.email.split('@')[0];
+  const initials = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('user-avatar').textContent = initials;
+  document.getElementById('user-name-label').textContent = name.split(' ')[0];
+  // Cargar progreso desde Supabase
+  loadFromSupabase();
+}
+
+function onUserLoggedOut(){
+  _currentUser = null;
+  document.getElementById('auth-screen').classList.remove('hidden');
+  // Limpiar estado al salir (por privacidad)
+  ST = {days:{},tasks:{},checks:{},exams:{}};
+}
+
+// ── SUPABASE AUTH LISTENER ────────────────────────────────────────────────────
+_sb.auth.onAuthStateChange((event, session)=>{
+  if(session?.user){
+    onUserLoggedIn(session.user);
+  } else {
+    onUserLoggedOut();
+  }
+});
+
+// Enter key en campos de auth
+document.addEventListener('keydown', e=>{
+  if(e.key!=='Enter') return;
+  const loginVisible = document.getElementById('form-login').style.display!=='none';
+  if(document.getElementById('auth-screen') && !document.getElementById('auth-screen').classList.contains('hidden')){
+    if(loginVisible) doLogin(); else doRegister();
+  }
+});
 
 // ── DATA ─────────────────────────────────────────────────────────────────────
 const TAG_STYLE = {
