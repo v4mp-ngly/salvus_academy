@@ -212,18 +212,32 @@ pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 
 
 }
 
-/* Móviles */
+.menu-btn{
+  display:none;
+  border:none;
+  background:none;
+  font-size:24px;
+  cursor:pointer;
+}
 
 @media (max-width:768px){
 
-  .app{
-    flex-direction:column;
+  .menu-btn{
+    display:block;
   }
 
   .sb{
-    width:100%;
-    min-width:100%;
-    height:auto;
+    position:fixed;
+    left:-240px;
+    top:0;
+    width:240px;
+    height:100vh;
+    z-index:9999;
+    transition:left .3s ease;
+  }
+
+  .sb.open{
+    left:0;
   }
 
   .main{
@@ -234,21 +248,15 @@ pre.cmd{background:#1A2635;color:#9FE1CB;border-radius:7px;padding:9px 42px 9px 
     padding:12px;
   }
 
-  .g4{
-    grid-template-columns:1fr;
-  }
-
-  .g2{
-    grid-template-columns:1fr;
-  }
-
+  .g4,
+  .g2,
   .day-2col{
     grid-template-columns:1fr;
   }
 
   .topbar{
-    flex-direction:column;
-    align-items:flex-start;
+    flex-direction:row;
+    align-items:center;
     gap:10px;
   }
 
@@ -370,6 +378,7 @@ XP: 0
   <!-- MAIN -->
   <div class="main">
     <div class="topbar">
+  <button id="menuToggle" class="menu-btn">☰</button>
       <h2 id="page-title">📊 Dashboard</h2>
       <div class="topbar-badges" style="align-items:center">
         <span class="sync-label"><span class="sync-dot" id="sync-dot"></span><span id="sync-txt">sincronizado</span></span>
@@ -1677,6 +1686,11 @@ const PAGE_TITLES = {
 };
 
 function navTo(page){
+  if(window.innerWidth < 768){
+  document
+    .querySelector('.sb')
+    .classList.remove('open');
+}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   const pageEl = document.getElementById('page-'+page);
@@ -1702,5 +1716,17 @@ document.querySelectorAll('.nav-item').forEach(n=>{
 updateGlobal();
 renderDashboard();
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const menuBtn = document.getElementById('menuToggle');
+  const sidebar = document.querySelector('.sb');
+
+  menuBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+  });
+});
+</script>
+
 </body>
 </html>
